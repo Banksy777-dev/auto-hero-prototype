@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auto Hero — Sale Leads (credit-gated mock)</title>
+<style>
+  :root{
+    --navy:#13294b; --brand:#1690D4; --red:#E2342B; --dark:#15171c;
+    --orange:#E8601C; --blue-btn:#1B6FB3; --green:#6FA72E;
+    --t1:#1a1d22; --t2:#5c5f66; --t3:#8a8d93;
+    --bg:#ffffff; --rowalt:#dadce0; --b1:#e6e7ea;
+    --info-bg:#e7f0fb; --info:#185fa5; --success:#1d9e75; --b2:#d7d9dd;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--t1);background:#fff;}
+  .layout{display:flex;min-height:100vh;}
+  .ic{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;flex:none;}
+  /* sidebar */
+  .side{width:210px;flex:none;background:var(--navy);color:#fff;padding:18px 0;}
+  .side .biz{padding:0 18px 14px;font-size:14px;font-weight:600;line-height:1.3;}
+  .side .promo{margin:0 14px 16px;height:74px;border:2px solid #fff;border-radius:6px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;font-weight:800;color:#fff;background:#1d3a64;letter-spacing:.5px;}
+  .side a{display:flex;align-items:center;gap:10px;padding:10px 18px;color:#cdd6e4;text-decoration:none;font-size:14px;}
+  .side a.active{background:var(--red);color:#fff;font-weight:600;}
+  .side a.sub{padding-left:34px;font-size:13px;color:#aab6c9;}
+  .side .help{padding:18px;font-size:12px;color:#cdd6e4;margin-top:10px;}
+  .side .help b{display:block;font-size:16px;color:#fff;font-style:italic;}
+  /* main */
+  .main{flex:1;min-width:0;}
+  .top{display:flex;align-items:flex-start;gap:20px;padding:14px 20px;border-bottom:1px solid var(--b1);flex-wrap:wrap;}
+  .logo{font-size:22px;font-weight:800;letter-spacing:.4px;}
+  .logo .a{color:var(--dark);}.logo .h{color:var(--red);}
+  .title{font-size:26px;font-weight:800;font-style:italic;letter-spacing:1px;}
+  .tabs{display:flex;gap:16px;margin-top:6px;font-size:13px;font-weight:700;color:var(--t1);}
+  .tabs .num{color:var(--red);}
+  .tabs .on{border-bottom:2px solid var(--red);padding-bottom:3px;}
+  .toolbar{margin-left:auto;display:flex;gap:16px;align-items:flex-start;}
+  .credits{background:var(--info-bg);color:var(--info);font-weight:700;font-size:13px;padding:8px 12px;border-radius:8px;white-space:nowrap;}
+  .legend{font-size:11px;color:var(--t2);display:flex;gap:10px;flex-wrap:wrap;max-width:230px;}
+  .chip{display:inline-flex;align-items:center;gap:4px;}
+  .sw{width:11px;height:11px;border-radius:2px;display:inline-block;}
+  /* table */
+  .tablewrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;min-width:980px;}
+  thead th{background:var(--navy);color:#fff;font-size:12px;font-weight:600;text-align:left;padding:11px 14px;}
+  tbody td{padding:14px;border-bottom:1px solid #c4c7cc;font-size:13px;vertical-align:top;}
+  tbody tr:nth-child(even){background:var(--rowalt);}
+  .det b{font-weight:700;}
+  .det p{margin:0 0 6px;}
+  .mask{letter-spacing:1px;color:var(--t2);}
+  .jt{color:var(--navy);}
+  .qbtn{border:none;border-radius:4px;color:#fff;font-size:12px;font-weight:700;padding:10px 14px;cursor:pointer;text-align:center;line-height:1.3;min-width:118px;}
+  .qbtn.orange{background:var(--orange);}
+  .qbtn.blue{background:var(--blue-btn);}
+  .qbtn.done{background:var(--green);cursor:default;}
+  .archive{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:10px;}
+  /* modal */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:18px;z-index:50;}
+  .mcard{background:#fff;border-radius:14px;width:100%;max-width:370px;padding:22px;}
+  .cbtn{flex:1;text-align:center;border-radius:8px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid;font-family:inherit;}
+  .cbtn.primary{background:var(--brand);color:#fff;border-color:var(--brand);}
+  .cbtn.ghost{background:transparent;color:var(--t1);border-color:var(--b2);font-weight:500;}
+  .note{font-size:11px;color:var(--t3);padding:10px 20px;}
+  .creditbox{display:flex;align-items:center;gap:8px;}
+  .credits.low{background:#fdeede;color:#9a5b16;}
+  .low-hint{display:none;font-weight:700;}
+  .credits.low .low-hint{display:inline;}
+  .topup-btn{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .credits.low + .topup-btn{box-shadow:0 0 0 3px rgba(22,144,212,.25);}
+  .packs{display:flex;flex-direction:column;gap:8px;}
+  .pack{display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--b2);border-radius:10px;padding:12px 14px;cursor:pointer;}
+  .pack:hover{border-color:var(--brand);}
+  .pack.sel{border-color:var(--brand);background:var(--info-bg);}
+  .pc-cr{display:block;font-size:15px;font-weight:600;}
+  .pc-rate{display:block;font-size:12px;color:var(--t2);}
+  .pc-price{font-size:18px;font-weight:700;}
+  .pc-badge{font-size:10px;font-weight:700;background:var(--info-bg);color:var(--info);padding:2px 7px;border-radius:999px;margin-left:6px;text-transform:uppercase;letter-spacing:.03em;}
+  .pc-badge.save{background:#e3f5ec;color:var(--success);}
+  .cbtn:disabled{opacity:.5;cursor:default;}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <aside class="side">
+    <div class="biz">Auto Hero Roadside<br>Assistance Sydney</div>
+    <div class="promo">AUTO HERO<br>24/7 ROADSIDE<br>ASSISTANCE</div>
+    <a href="#">Home</a>
+    <a href="#">Enquires (0)</a>
+    <a href="#">Tyre Catalogue</a>
+    <a href="#">Add Top Sellers</a>
+    <a href="#" class="active">Sale Leads (2117)</a>
+    <a href="#">Ad Performance</a>
+    <a href="#">My Details</a>
+    <a href="#">Marketing Tips</a>
+    <a href="#">Tyre Quote Pro</a>
+    <a href="#" class="sub">Standard Tyre Quote</a>
+    <a href="#" class="sub">Staggered Tyre Quote</a>
+    <a href="#" class="sub">Past Quotes</a>
+    <a href="#">Logout</a>
+    <div class="help">Need Help? Call us on<b>0415 767 767</b></div>
+  </aside>
+
+  <div class="main">
+    <div class="top">
+      <div>
+        <div class="logo"><span class="a">AUTO</span><span class="h">HERO</span></div>
+      </div>
+      <div>
+        <div class="title">SALE LEADS</div>
+        <div class="tabs"><span class="on">SHOW ALL</span><span>REQUESTS <span class="num">2106</span></span><span>QUOTED <span class="num">50</span></span><span>NOT QUOTED <span class="num">2056</span></span><span>ARCHIVED <span class="num">11</span></span></div>
+      </div>
+      <div class="toolbar">
+        <div class="creditbox">
+          <div class="credits" id="creditChip">Credits: <span class="bal-num">5</span><span class="low-hint"> · running low</span></div>
+          <button class="topup-btn" onclick="openTopup()">+ Top up</button>
+        </div>
+        <div class="legend">
+          <span class="chip"><span class="sw" style="background:var(--blue-btn);"></span>Not quoted</span>
+          <span class="chip"><span class="sw" style="background:var(--orange);"></span>Viewed, not quoted</span>
+          <span class="chip"><span class="sw" style="background:var(--green);"></span>Quote sent</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Received</th><th>Job Type</th><th>Job and Customer Details</th><th>Events</th><th>Response Time</th><th>Notes</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+
+          <tr data-name="Sarah" data-cost="4" data-phone="0412 345 678" data-email="sarah.jenkins@outlook.com">
+            <td>10/06/2026<br>08:32 AM</td>
+            <td><svg class="ic jt" style="width:34px;height:34px;" viewBox="0 0 24 24"><path d="M5 17a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M15 17a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6"/></svg></td>
+            <td class="det">
+              <p><b>Name:</b> Sarah Jenkins</p>
+              <p><b>Phone:</b> <span class="ph mask">04 ** *** ***</span></p>
+              <p><b>Email:</b> <span class="em mask">s****@*****.com</span></p>
+              <p><b>Location:</b> Marrickville, NSW, 2204 (2.4km) from you</p>
+              <p><b>Services:</b> Brake Repair</p>
+              <p><b>Vehicle:</b> 2018 Mazda CX-5</p>
+              <p><b>Car rego:</b> NSW DKP47C</p>
+              <p><b>Comments:</b> Front brakes grinding, can someone look this week?</p>
+            </td>
+            <td>Opened: <b>0</b></td>
+            <td>Not Responded</td>
+            <td>Notes (0)</td>
+            <td><div class="archive">Archive Quote</div><button class="qbtn orange" onclick="openConfirm(this)">QUOTE NOW</button></td>
+          </tr>
+
+          <tr data-name="Mark" data-cost="1" data-phone="0449 112 880" data-email="mark.taylor@gmail.com">
+            <td>08/06/2026<br>08:47 PM</td>
+            <td><svg class="ic jt" style="width:34px;height:34px;" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M7 12a5 5 0 1 0 10 0a5 5 0 0 0 -10 0"/></svg></td>
+            <td class="det">
+              <p><b>Name:</b> Mark Taylor</p>
+              <p><b>Phone:</b> <span class="ph mask">04 ** *** ***</span></p>
+              <p><b>Email:</b> <span class="em mask">m****@*****.com</span></p>
+              <p><b>Location:</b> Darlington, NSW, 2008 (12.67km) from you</p>
+              <p><b>Services:</b> Wheel Alignment</p>
+              <p><b>Car rego:</b> NSW CWN90W</p>
+              <p><b>Comments:</b> Had two new tyres put on, needs a wheel alignment asap.</p>
+            </td>
+            <td>Opened: <b>0</b></td>
+            <td>Not Responded</td>
+            <td>Notes (0)</td>
+            <td><div class="archive">Archive Quote</div><button class="qbtn blue" onclick="openConfirm(this)">QUOTE NOW</button></td>
+          </tr>
+
+          <tr data-name="Priya" data-cost="3" data-phone="0406 220 191" data-email="priya.nair@gmail.com">
+            <td>07/06/2026<br>02:20 PM</td>
+            <td><svg class="ic jt" style="width:34px;height:34px;" viewBox="0 0 24 24"><path d="M4 8a1 1 0 0 1 1 -1h13a1 1 0 0 1 1 1v8a1 1 0 0 1 -1 1h-13a1 1 0 0 1 -1 -1z"/><path d="M22 11v2"/><path d="M8 10v4"/><path d="M12 10v4"/></svg></td>
+            <td class="det">
+              <p><b>Name:</b> Priya Nair</p>
+              <p><b>Phone:</b> <span class="ph mask">04 ** *** ***</span></p>
+              <p><b>Email:</b> <span class="em mask">p****@*****.com</span></p>
+              <p><b>Location:</b> Cabramatta, NSW, 2166 (15.07km) from you</p>
+              <p><b>Services:</b> Batteries &amp; Lights</p>
+              <p><b>Vehicle:</b> 2023 Toyota Corolla</p>
+              <p><b>Car rego:</b> NSW FDZ89F</p>
+              <p><b>Comments:</b> Replace battery for car.</p>
+            </td>
+            <td>Opened: <b>0</b></td>
+            <td>Not Responded</td>
+            <td>Notes (0)</td>
+            <td><div class="archive">Archive Quote</div><button class="qbtn orange" onclick="openConfirm(this)">QUOTE NOW</button></td>
+          </tr>
+
+          <tr data-name="Dane" data-cost="4" data-phone="0413 905 612" data-email="dane.wallace@gmail.com">
+            <td>05/06/2026<br>10:45 AM</td>
+            <td><svg class="ic jt" style="width:34px;height:34px;" viewBox="0 0 24 24"><path d="M3 21h4l13 -13a1.5 1.5 0 0 0 -4 -4l-13 13v4"/><path d="M14.5 5.5l4 4"/></svg></td>
+            <td class="det">
+              <p><b>Name:</b> Dane Wallace</p>
+              <p><b>Phone:</b> <span class="ph mask">04 ** *** ***</span></p>
+              <p><b>Email:</b> <span class="em mask">d****@*****.com</span></p>
+              <p><b>Location:</b> Caringbah, NSW, 2229 (23.21km) from you</p>
+              <p><b>Services:</b> New Tyres (3–4)</p>
+              <p><b>Car rego:</b> NSW YNZ68W</p>
+              <p><b>Comments:</b> Needing 4 new tyres and to repair a spare with a nail puncture.</p>
+            </td>
+            <td>Opened: <b>0</b></td>
+            <td>Not Responded</td>
+            <td>Notes (0)</td>
+            <td><div class="archive">Archive Quote</div><button class="qbtn orange" onclick="openConfirm(this)">QUOTE NOW</button></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Interactive mock · phone &amp; email are masked until you spend credits · click QUOTE NOW on any lead. Customer data is placeholder, not real.</p>
+  </div>
+</div>
+
+<div class="overlay" id="modal">
+  <div class="mcard">
+    <p id="m-title" style="font-size:17px;font-weight:600;margin:0 0 14px;">Contact Sarah?</p>
+    <div style="background:var(--info-bg);border-radius:8px;padding:14px;text-align:center;margin-bottom:12px;">
+      <p style="margin:0;"><span id="m-cost" style="font-size:24px;font-weight:700;color:var(--info);">4 credits</span></p>
+      <p style="font-size:13px;color:var(--info);margin:2px 0 0;">to unlock their phone &amp; email</p>
+    </div>
+    <p id="m-bal" style="font-size:13px;color:var(--t2);text-align:center;margin:0 0 14px;">You have <b style="color:var(--t1);">37 credits</b> — <b style="color:var(--t1);">33</b> left after this</p>
+    <div id="m-note" style="display:flex;align-items:flex-start;gap:8px;background:#f4f5f7;border-radius:8px;padding:11px 12px;margin-bottom:16px;">
+      <svg class="ic" style="width:16px;height:16px;color:var(--t2);margin-top:1px;" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></svg>
+      <span style="font-size:12px;color:var(--t2);">Credits are used the moment you unlock, and it's final. If the lead's a genuine dud, the Lead Quality Guarantee refunds them.</span>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="cbtn ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="cbtn primary" id="m-confirm" onclick="confirmUnlock()">Use 4 credits &amp; unlock</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="topup">
+  <div class="mcard" style="max-width:420px;">
+    <p style="font-size:17px;font-weight:600;margin:0 0 4px;">Top up credits</p>
+    <p style="font-size:13px;color:var(--t2);margin:0 0 16px;">You have <b class="bal-num" style="color:var(--t1);">5</b> credits left. Add more so you never miss a lead.</p>
+    <div class="packs">
+      <div class="pack" data-credits="20" data-price="54" onclick="selectPack(this)">
+        <div><span class="pc-cr">20 credits</span><span class="pc-rate">$2.70 / credit</span></div>
+        <span class="pc-price">$54</span>
+      </div>
+      <div class="pack" data-credits="50" data-price="124" onclick="selectPack(this)">
+        <div><span class="pc-cr">50 credits<span class="pc-badge">Most popular</span></span><span class="pc-rate">$2.48 / credit</span></div>
+        <span class="pc-price">$124</span>
+      </div>
+      <div class="pack" data-credits="100" data-price="219" onclick="selectPack(this)">
+        <div><span class="pc-cr">100 credits<span class="pc-badge save">Save 19%</span></span><span class="pc-rate">$2.19 / credit</span></div>
+        <span class="pc-price">$219</span>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--t3);margin:14px 0 16px;">Top-up credits are added to your balance instantly. Visual mock — no real payment.</p>
+    <div style="display:flex;gap:10px;">
+      <button class="cbtn ghost" onclick="closeTopup()">Cancel</button>
+      <button class="cbtn primary" id="topup-confirm" onclick="confirmTopup()" disabled>Select a pack</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  var balance=5, currentRow=null, selectedPack=null;
+  var LOW=5;
+  function plural(n){return n+(n===1?' credit':' credits');}
+  function refreshCredits(){
+    document.querySelectorAll('.bal-num').forEach(function(e){e.textContent=balance;});
+    var chip=document.getElementById('creditChip');
+    if(balance<=LOW){chip.classList.add('low');}else{chip.classList.remove('low');}
+  }
+  function openConfirm(btn){
+    currentRow=btn.closest('tr');
+    var name=currentRow.dataset.name, cost=+currentRow.dataset.cost;
+    document.getElementById('m-cost').textContent=plural(cost);
+    var cbtn=document.getElementById('m-confirm');
+    var note=document.getElementById('m-note');
+    if(balance<cost){
+      document.getElementById('m-title').textContent='Not enough credits';
+      document.getElementById('m-bal').innerHTML='You have <b style="color:var(--t1);">'+balance+'</b> credits — you need <b style="color:var(--t1);">'+cost+'</b> to contact '+name+'.';
+      note.style.display='none';
+      cbtn.textContent='Top up credits';
+      cbtn.onclick=function(){closeConfirm();openTopup();};
+    }else{
+      document.getElementById('m-title').textContent='Contact '+name+'?';
+      document.getElementById('m-bal').innerHTML='You have <b style="color:var(--t1);">'+balance+' credits</b> — <b style="color:var(--t1);">'+(balance-cost)+'</b> left after this';
+      note.style.display='flex';
+      cbtn.textContent='Use '+plural(cost)+' & unlock';
+      cbtn.onclick=confirmUnlock;
+    }
+    document.getElementById('modal').style.display='flex';
+  }
+  function closeConfirm(){document.getElementById('modal').style.display='none';currentRow=null;}
+  function confirmUnlock(){
+    if(!currentRow)return;
+    var cost=+currentRow.dataset.cost;
+    var ph=currentRow.querySelector('.ph'), em=currentRow.querySelector('.em');
+    ph.textContent=currentRow.dataset.phone; ph.classList.remove('mask');
+    em.textContent=currentRow.dataset.email; em.classList.remove('mask');
+    var b=currentRow.querySelector('.qbtn');
+    b.textContent='✓ UNLOCKED'; b.className='qbtn done'; b.onclick=null;
+    balance-=cost;
+    refreshCredits();
+    closeConfirm();
+  }
+  function openTopup(){
+    selectedPack=null;
+    document.querySelectorAll('.pack').forEach(function(p){p.classList.remove('sel');});
+    var b=document.getElementById('topup-confirm');
+    b.disabled=true; b.textContent='Select a pack';
+    document.getElementById('topup').style.display='flex';
+  }
+  function closeTopup(){document.getElementById('topup').style.display='none';}
+  function selectPack(el){
+    document.querySelectorAll('.pack').forEach(function(p){p.classList.remove('sel');});
+    el.classList.add('sel');
+    selectedPack={credits:+el.dataset.credits, price:+el.dataset.price};
+    var b=document.getElementById('topup-confirm');
+    b.disabled=false;
+    b.textContent='Add '+selectedPack.credits+' credits · $'+selectedPack.price;
+  }
+  function confirmTopup(){
+    if(!selectedPack)return;
+    balance+=selectedPack.credits;
+    refreshCredits();
+    closeTopup();
+  }
+  refreshCredits();
+</script>
+</body>
+</html>
