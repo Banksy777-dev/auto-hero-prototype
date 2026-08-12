@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auto Hero — email to dashboard (prototype)</title>
+<style>
+  :root{
+    --bg-primary:#ffffff; --bg-secondary:#f4f5f7; --bg-info:#e7f0fb; --info-bg:#e7f0fb;
+    --t1:#16181d; --t2:#5c5f66; --t3:#8a8d93; --info:#185fa5; --success:#1d9e75;
+    --b-tertiary:#e6e7ea; --b1:#e6e7ea; --b-secondary:#d7d9dd; --b2:#d7d9dd;
+    --brand:#1690D4; --brand-red:#E23B2E; --red:#E2342B; --dark:#15171c;
+    --amber:#F5A623; --green:#3FA535; --navy:#13294b;
+    --orange:#E8601C; --blue-btn:#1B6FB3; --rowalt:#dadce0;
+    --r-md:8px; --r-lg:16px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--t1);line-height:1.5;}
+  body.mode-journey{background:#eceef1;padding:24px 16px 48px;}
+  body.mode-app{background:#fff;padding:0;}
+  .ic{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;flex:none;}
+  /* journey */
+  .intro{max-width:560px;margin:0 auto 20px;text-align:center;}
+  .intro h1{font-size:15px;font-weight:600;margin:0 0 2px;}
+  .intro p{font-size:12px;color:var(--t3);margin:0;}
+  .steps{display:flex;align-items:flex-start;max-width:430px;margin:0 auto 22px;}
+  .step{flex:none;width:96px;text-align:center;}
+  .step .num{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;margin:0 auto 6px;background:var(--bg-secondary);color:var(--t3);border:1px solid var(--b-secondary);}
+  .step .lbl{font-size:11px;color:var(--t3);display:block;}
+  .step.active .num{background:var(--brand);color:#fff;border-color:var(--brand);}
+  .step.active .lbl{color:var(--t1);font-weight:500;}
+  .step.done .num{background:var(--bg-info);color:var(--info);border-color:var(--brand);}
+  .step.done .lbl{color:var(--t2);}
+  .bar{flex:1;height:1px;margin-top:13px;background:var(--b-secondary);}
+  .ctabtn{display:block;width:100%;text-align:center;background:var(--brand);color:#fff;border:1px solid var(--brand);border-radius:var(--r-md);padding:12px;font-size:15px;font-weight:600;cursor:pointer;}
+  .ctabtn.ghost{background:transparent;color:var(--t1);border-color:var(--b-secondary);font-weight:500;}
+  .mask{font-variant-numeric:tabular-nums;letter-spacing:1px;color:var(--t2);}
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;}
+  .tbl td{border:1px solid var(--b-tertiary);padding:8px 10px;}
+  .tbl td.l{color:var(--t2);width:90px;background:var(--bg-secondary);}
+  .crow{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--t2);margin:0 0 7px;}
+  .card{background:var(--bg-primary);border:1px solid var(--b-tertiary);border-radius:var(--r-lg);overflow:hidden;max-width:560px;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.06);}
+  .sarah{display:flex;align-items:center;gap:12px;}
+  .av{width:42px;height:42px;border-radius:50%;background:var(--bg-info);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:var(--info);flex:none;}
+  .row{display:flex;align-items:center;gap:8px;}
+  .plan{border:1px solid var(--b-tertiary);border-radius:var(--r-md);padding:14px;display:flex;flex-direction:column;}
+  .plan.hero{border:2px solid var(--brand);position:relative;}
+  .badge{position:absolute;top:-10px;left:14px;background:var(--brand);color:#fff;font-size:11px;padding:2px 9px;border-radius:var(--r-md);}
+  details.faq{border:1px solid var(--b-tertiary);border-radius:var(--r-md);margin-bottom:10px;}
+  details.faq>summary{list-style:none;cursor:pointer;padding:14px 16px;font-size:16px;font-weight:500;display:flex;justify-content:space-between;align-items:center;}
+  details.faq>summary::-webkit-details-marker{display:none;}
+  details.faq .body{padding:0 16px 16px;font-size:14px;color:var(--t2);line-height:1.65;}
+  .pay-wrap{max-width:390px;margin:0 auto;}
+  .fld{font-size:12px;color:var(--t2);display:block;margin:10px 0 4px;}
+  .pay-wrap input{width:100%;padding:10px;border:1px solid var(--b-secondary);border-radius:var(--r-md);font-size:14px;font-family:inherit;}
+  .wm{text-align:center;font-size:15px;font-weight:800;letter-spacing:.4px;padding:14px 0 0;}
+  .wm .b{color:var(--brand);}.wm .r{color:var(--brand-red);}
+  .tcard{border:1px solid var(--b-tertiary);border-radius:var(--r-md);overflow:hidden;background:var(--bg-primary);max-width:420px;margin:0 auto 16px;}
+  .tphoto{position:relative;height:150px;background:#dfe1e5 url('https://www.autohero.com.au/content/images/v2/testimonials/tyrepluswanneroo-image.png') center/cover no-repeat;}
+  .tphoto .cap{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.65));color:#fff;padding:14px 12px 9px;font-size:12px;font-weight:600;text-align:left;}
+  .tphoto .cap span{font-weight:400;font-size:11px;opacity:.9;display:block;}
+  .tbody{padding:16px;text-align:center;}
+  .tbody .st{color:var(--amber);font-size:15px;letter-spacing:2px;margin-bottom:8px;}
+  .tbody .q{font-size:13px;line-height:1.5;margin:0 0 12px;}
+  .tbody .br{font-size:14px;font-weight:800;color:var(--green);letter-spacing:.5px;margin:0 0 6px;}
+  .tbody .nm{font-size:14px;font-weight:700;margin:0 0 2px;}
+  .tbody .mt{font-size:12px;font-style:italic;color:var(--t2);margin:0;}
+  .tbody .sn{font-size:12px;font-weight:600;margin:5px 0 0;}
+  a{color:var(--brand);}
+  .cat{font-size:13px;font-weight:600;color:var(--t1);margin:14px 0 4px;}
+  .exrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b-tertiary);}
+  .exrow:last-of-type{border-bottom:none;}
+  .pill{background:var(--bg-info);color:var(--info);font-size:12px;padding:3px 9px;border-radius:var(--r-md);white-space:nowrap;}
+  /* dashboard */
+  .layout{display:flex;min-height:100vh;}
+  .side{width:210px;flex:none;background:var(--navy);color:#fff;padding:18px 0;}
+  .side .biz{padding:0 18px 14px;font-size:14px;font-weight:600;line-height:1.3;}
+  .side .promo{margin:0 14px 16px;height:74px;border:2px solid #fff;border-radius:6px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:11px;font-weight:800;color:#fff;background:#1d3a64;letter-spacing:.5px;}
+  .side a{display:flex;align-items:center;gap:10px;padding:10px 18px;color:#cdd6e4;text-decoration:none;font-size:14px;}
+  .side a.active{background:var(--red);color:#fff;font-weight:600;}
+  .side a.sub{padding-left:34px;font-size:13px;color:#aab6c9;}
+  .side .help{padding:18px;font-size:12px;color:#cdd6e4;margin-top:10px;}
+  .side .help b{display:block;font-size:16px;color:#fff;font-style:italic;}
+  .main{flex:1;min-width:0;}
+  .top{display:flex;align-items:flex-start;gap:20px;padding:14px 20px;border-bottom:1px solid var(--b1);flex-wrap:wrap;}
+  .logo{font-size:22px;font-weight:800;letter-spacing:.4px;}
+  .logo .a{color:var(--dark);}.logo .h{color:var(--red);}
+  .title{font-size:26px;font-weight:800;font-style:italic;letter-spacing:1px;}
+  .tabs{display:flex;gap:16px;margin-top:6px;font-size:13px;font-weight:700;color:var(--t1);}
+  .tabs .num{color:var(--red);}
+  .tabs .on{border-bottom:2px solid var(--red);padding-bottom:3px;}
+  .toolbar{margin-left:auto;display:flex;gap:16px;align-items:flex-start;}
+  .credits{background:var(--info-bg);color:var(--info);font-weight:700;font-size:13px;padding:8px 12px;border-radius:8px;white-space:nowrap;}
+  .legend{font-size:11px;color:var(--t2);display:flex;gap:10px;flex-wrap:wrap;max-width:230px;}
+  .chip{display:inline-flex;align-items:center;gap:4px;}
+  .sw{width:11px;height:11px;border-radius:2px;display:inline-block;}
+  .tablewrap{overflow-x:auto;}
+  #dashboard table{width:100%;border-collapse:collapse;min-width:980px;}
+  #dashboard thead th{background:var(--navy);color:#fff;font-size:12px;font-weight:600;text-align:left;padding:11px 14px;}
+  #dashboard tbody td{padding:14px;border-bottom:1px solid #c4c7cc;font-size:13px;vertical-align:top;}
+  #dashboard tbody tr:nth-child(even){background:var(--rowalt);}
+  .det b{font-weight:700;}
+  .det p{margin:0 0 6px;}
+  .jt{color:var(--navy);}
+  .qbtn{border:none;border-radius:4px;color:#fff;font-size:12px;font-weight:700;padding:10px 14px;cursor:pointer;text-align:center;line-height:1.3;min-width:118px;}
+  .qbtn.orange{background:var(--orange);}
+  .qbtn.blue{background:var(--blue-btn);}
+  .qbtn.done{background:#6FA72E;cursor:default;}
+  .archive{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:10px;}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:18px;z-index:50;}
+  .mcard{background:#fff;border-radius:14px;width:100%;max-width:370px;padding:22px;}
+  .cbtn{flex:1;text-align:center;border-radius:8px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid;font-family:inherit;}
+  .cbtn.primary{background:var(--brand);color:#fff;border-color:var(--brand);}
+  @keyframes pulseGlow{
+    0%{box-shadow:0 0 0 0 rgba(232,96,28,.55);}
+    70%{box-shadow:0 0 0 14px rgba(232,96,28,0);}
+    100%{box-shadow:0 0 0 0 rgba(232,96,28,0);}
+  }
+  .pulse-once{animation:pulseGlow 1s ease-out 1;}
+  .cbtn.ghost{background:transparent;color:var(--t1);border-color:var(--b2);font-weight:500;}
+  .cbtn:disabled{opacity:.5;cursor:default;}
+  .note{font-size:11px;color:var(--t3);padding:10px 20px;}
+  .creditbox{display:flex;align-items:center;gap:8px;}
+  .credits.low{background:#fdeede;color:#9a5b16;}
+  .low-hint{display:none;font-weight:700;}
+  .credits.low .low-hint{display:inline;}
+  .topup-btn{background:var(--brand);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .credits.low + .topup-btn{box-shadow:0 0 0 3px rgba(22,144,212,.25);}
+  .packs{display:flex;flex-direction:column;gap:8px;}
+  .pack{display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--b2);border-radius:10px;padding:13px 18px;cursor:pointer;gap:14px;}
+  .pack:hover{border-color:var(--brand);}
+  .pack.sel{border-color:var(--brand);background:var(--info-bg);}
+  .pc-cr{display:block;font-size:18px;font-weight:600;}
+  .pc-rate{display:block;font-size:14px;color:var(--t2);margin-top:2px;}
+  .pc-price{font-size:22px;font-weight:700;}
+  .pc-badge{font-size:11px;font-weight:700;background:var(--info-bg);color:var(--info);padding:3px 9px;border-radius:999px;margin-left:8px;text-transform:uppercase;letter-spacing:.03em;}
+  .pc-badge.save{background:#e3f5ec;color:var(--success);}
+  .packs{gap:12px;}
+  @media(max-width:480px){
+    .step{width:84px;} .step .lbl{font-size:10px;}
+    .plan-grid{grid-template-columns:1fr !important;}
+  }
+</style>
+</head>
+<body class="mode-journey">
+
+<div id="journey">
+  <div class="intro">
+    <h1>Auto Hero — from lead email to your dashboard</h1>
+    <p>Click through: the email → land in your live Sale Leads dashboard · visual mock, no real payment</p>
+  </div>
+
+  <div class="steps">
+    <div class="step" data-node="1"><div class="num">1</div><span class="lbl">The email</span></div>
+    <div class="bar" data-bar="1"></div>
+    <div class="step" data-node="2"><div class="num">2</div><span class="lbl">Complementary Quote</span></div>
+    <div class="bar" data-bar="2"></div>
+    <div class="step" data-node="3"><div class="num">3</div><span class="lbl">Your dashboard</span></div>
+  </div>
+
+  <!-- SCREEN 1: EMAIL -->
+  <div data-screen="1">
+    <div class="card">
+      <div style="background:var(--dark);padding:22px;text-align:center;">
+        <div style="font-size:23px;font-weight:800;letter-spacing:.5px;"><span style="color:var(--brand);">AUTO</span><span style="color:var(--brand-red);">HERO</span></div>
+        <p style="color:#fff;font-size:16px;font-weight:600;margin:8px 0 0;">A new customer is waiting near you</p>
+      </div>
+      <div style="padding:22px;">
+        <p style="font-size:14px;margin:0 0 4px;">Hi Hornby Tyrepower,</p>
+        <p style="font-size:13px;color:var(--t2);margin:0 0 16px;">A new customer's come in close to you and matched to your services:</p>
+        <div class="row" style="margin-bottom:3px;"><svg class="ic" style="width:19px;height:19px;color:var(--brand);" viewBox="0 0 24 24"><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></svg><span style="font-size:18px;font-weight:600;">Sarah needs a brake repair</span></div>
+        <p class="row" style="font-size:14px;color:var(--t2);margin:0 0 16px;gap:6px;"><svg class="ic" style="width:15px;height:15px;" viewBox="0 0 24 24"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z"/></svg>Marrickville, NSW · 2.4 km from your shop</p>
+        <div style="border:1px solid var(--b-tertiary);border-radius:var(--r-md);padding:13px;margin-bottom:8px;">
+          <div class="row" style="margin-bottom:9px;"><svg class="ic" style="width:16px;height:16px;color:var(--brand);" viewBox="0 0 24 24"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z"/><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M8 11v-4a4 4 0 1 1 8 0v4"/></svg><span style="font-size:14px;font-weight:500;">4 credits to unlock her details</span></div>
+          <p class="row" style="font-size:14px;margin:0 0 5px;color:var(--t2);"><svg class="ic" style="width:15px;height:15px;" viewBox="0 0 24 24"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"/></svg><span class="mask">04 ** *** ***</span></p>
+          <p class="row" style="font-size:14px;margin:0;color:var(--t2);"><svg class="ic" style="width:15px;height:15px;" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"/><path d="M3 7l9 6l9 -6"/></svg><span class="mask">s****@*****.com</span></p>
+        </div>
+        <p style="font-size:12px;color:var(--t3);margin:0 0 16px;">0 of 3 nearby shops have responded · be first to call</p>
+        <button class="ctabtn" style="margin-bottom:22px;" onclick="openComplementary()">See Sarah's details</button>
+        <p style="font-size:13px;font-weight:500;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px;">Job details</p>
+        <table class="tbl">
+          <tr><td class="l">Services</td><td>Brake repair</td></tr>
+          <tr><td class="l">Make</td><td>Mazda</td></tr>
+          <tr><td class="l">Model</td><td>CX-5</td></tr>
+          <tr><td class="l">Year</td><td>2018</td></tr>
+          <tr><td class="l">Car rego</td><td>NSW DKP47C</td></tr>
+          <tr><td class="l">Message</td><td>My front brakes are grinding — can someone take a look this week?</td></tr>
+        </table>
+        <div style="display:flex;align-items:flex-start;gap:8px;margin:16px 0;"><svg class="ic" style="width:18px;height:18px;color:var(--amber);" viewBox="0 0 24 24"><path d="M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0 -1 3a2 2 0 0 1 -4 0a3.5 3.5 0 0 0 -1 -3"/><path d="M9.7 17h4.6"/></svg><span style="font-size:13px;color:var(--t2);"><b>Tip:</b> reply fast — most customers need the work done urgently and call the first shop back.</span></div>
+        <div style="display:flex;align-items:flex-start;gap:8px;background:var(--bg-secondary);border-radius:var(--r-md);padding:12px;margin-bottom:18px;"><svg class="ic" style="width:18px;height:18px;color:var(--success);" viewBox="0 0 24 24"><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3"/><path d="M9 12l2 2l4 -4"/></svg><span style="font-size:13px;color:var(--t2);">Verified lead, matched to your services. If it's a dud, we refund the credits.</span></div>
+        <button class="ctabtn" onclick="openComplementary()">See Sarah's details</button>
+        <div style="border:1px solid var(--brand);border-radius:var(--r-md);padding:14px;margin-top:22px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 10px;">Questions? Talk to a real person.</p>
+          <p style="font-size:13px;margin:0 0 8px;"><b>Matt Banks</b> · Dealer Success</p>
+          <p class="crow"><svg class="ic" style="width:16px;height:16px;color:var(--brand);" viewBox="0 0 24 24"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"/></svg>0415 767 767</p>
+          <p class="crow"><svg class="ic" style="width:16px;height:16px;color:var(--brand);" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z"/><path d="M3 7l9 6l9 -6"/></svg>matt@autohero.com.au</p>
+          <p style="font-size:12px;color:var(--t3);margin:4px 0 0;">Or just reply to this email — a real person answers, not a bot.</p>
+        </div>
+      </div>
+      <div style="background:var(--bg-secondary);padding:20px;text-align:center;">
+        <p style="font-size:12px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin:0 0 14px;">Helping tyre &amp; mechanical shops win local customers since 2014</p>
+        <div class="tcard">
+          <div class="tphoto"><div class="cap">Tyre Plus Wanneroo<span>wanneroo.tyreplus.com.au</span></div></div>
+          <div class="tbody">
+            <div class="st">★★★★★</div>
+            <p class="q">"Auto Hero opened up many leads for us. We have since increased our own TyrePlus Wanneroo website and the combination of the two is very beneficial."</p>
+            <p class="br">TYRE PLUS</p>
+            <p class="nm">Rod Greene</p>
+            <p class="mt">Bricks and mortar location · Wanneroo, WA</p>
+            <p class="sn">Partner since 2016</p>
+          </div>
+        </div>
+        <p style="font-size:14px;font-weight:600;margin:0 0 4px;">Australia's #1 and highest-reviewed auto repair website</p>
+        <div style="font-size:16px;color:var(--amber);letter-spacing:2px;">★★★★★</div>
+        <p style="font-size:13px;color:var(--t2);margin:4px 0 12px;"><b style="color:var(--t1);">4.6</b> from 7,651 reviews on ProductReview.com.au</p>
+        <p style="margin:0;"><a href="https://www.autohero.com.au/dealers/signup/">New to Auto Hero? See how it works &amp; read what shops say →</a></p>
+      </div>
+      <div style="padding:16px 22px;border-top:1px solid var(--b-tertiary);">
+        <p style="font-size:13px;margin:0 0 8px;text-align:center;"><a href="#" style="font-weight:500;">Unsubscribe from lead alerts</a> &nbsp;·&nbsp; <a href="#" style="color:var(--t2);">Update preferences</a></p>
+        <p style="font-size:11px;color:var(--t3);margin:0 0 5px;">You're getting this because Hornby Tyrepower signed up to receive brake &amp; mechanical leads. You can unsubscribe at any time.</p>
+        <p style="font-size:11px;color:var(--t3);margin:0;">Auto Hero Pty Ltd · ABN 95 648 833 710 · 1/123 Example St, Sydney NSW 2000. Please don't forward — these details are reserved for nearby shops.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /journey -->
+
+<div class="overlay" id="compQuote">
+  <div class="mcard">
+    <p style="font-size:17px;font-weight:600;margin:0 0 14px;">Use your Complementary Quote?</p>
+    <div style="background:var(--info-bg);border-radius:8px;padding:14px;text-align:center;margin-bottom:12px;">
+      <p style="margin:0;"><span style="font-size:24px;font-weight:700;color:var(--info);">Complementary Quote</span></p>
+      <p style="font-size:13px;color:var(--info);margin:2px 0 0;">unlocks Sarah's phone &amp; email — free, no credits used</p>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:8px;background:#f4f5f7;border-radius:8px;padding:11px 12px;margin-bottom:16px;">
+      <svg class="ic" style="width:16px;height:16px;color:var(--t2);margin-top:1px;" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></svg>
+      <span style="font-size:12px;color:var(--t2);">New shops get one Complementary Quote to try Auto Hero before spending credits.</span>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="cbtn ghost" onclick="closeComplementary()">Cancel</button>
+      <button class="cbtn primary" onclick="useComplementary()">Use Complementary Quote</button>
+    </div>
+  </div>
+</div>
+
+<div id="dashboard" style="display:none;">
+  <div class="layout">
+    <aside class="side">
+      <div class="biz">Auto Hero Roadside<br>Assistance Sydney</div>
+      <div class="promo">AUTO HERO<br>24/7 ROADSIDE<br>ASSISTANCE</div>
+      <a href="#">Home</a>
+      <a href="#">Enquires (0)</a>
+      <a href="#">Tyre Catalogue</a>
+      <a href="#">Add Top Sellers</a>
+      <a href="#" class="active">Sale Leads (2117)</a>
+      <a href="#">Ad Performance</a>
+      <a href="#">My Details</a>
+      <a href="#">Marketing Tips</a>
+      <a href="#">Tyre Quote Pro</a>
+      <a href="#" class="sub">Standard Tyre Quote</a>
+      <a href="#" class="sub">Staggered Tyre Quote</a>
+      <a href="#" class="sub">Past Quotes</a>
+      <a href="#">Logout</a>
+      <div class="help">Need Help? Call us on<b>0415 767 767</b></div>
+    </aside>
+
+    <div class="main">
+      <div class="top">
+        <div>
+          <div class="logo"><span class="a">AUTO</span><span class="h">HERO</span></div>
+        </div>
+        <div>
+          <div class="title">SALE LEADS</div>
+          <div class="tabs"><span class="on">SHOW ALL</span><span>REQUESTS <span class="num">2106</span></span><span>QUOTED <span class="num">50</span></span><span>NOT QUOTED <span class="num">2056</span></span><span>ARCHIVED <span class="num">11</span></span></div>
+        </div>
+        <div class="toolbar">
+          <div class="creditbox">
+            <div class="credits" id="creditChip">Credits: <span class="bal-num">40</span><span class="low-hint"> · running low</span></div>
+            <button class="topup-btn" onclick="openTopup()">+ Top up</button>
+          </div>
+          <div class="legend">
+            <span class="chip"><span class="sw" style="background:var(--blue-btn);"></span>Not quoted</span>
+            <span class="chip"><span class="sw" style="background:var(--orange);"></span>Viewed, not quoted</span>
+            <span class="chip"><span class="sw" style="background:#6FA72E;"></span>Quote sent</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg-info);color:var(--info);font-size:13px;padding:9px 20px;border-bottom:1px solid var(--b1);">✓ You're all set — your credits are live. Click <b>QUOTE NOW</b> on a lead to unlock the customer's phone &amp; email.</div>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th>Received</th><th>Job Type</th><th>Job and Customer Details</th><th>Events</th><th>Response Time</th><th>Notes</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+
+            <tr data-name="Sarah" data-cost="4" data-phone="0412 345 678" data-email="sarah.jenkins@outlook.com">
+              <td>10/06/2026<br>08:32 AM</td>
+              <td><svg class="ic jt" style="width:34px;height:34px;" viewBox="0 0 24 24"><path d="M5 17a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M15 17a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6"/></svg></td>
+              <td class="det">
+                <p><b>Name:</b> Sarah Jenkins</p>
+                <p><b>Phone:</b> <span class="ph mask">04 ** *** ***</span></p>
+                <p><b>Email:</b> <span class="em mask">s****@*****.com</span></p>
+                <p><b>Location:</b> Marrickville, NSW, 2204 (2.4km) from you</p>
+                <p><b>Services:</b> Brake Repair</p>
+                <p><b>Vehicle:</b> 2018 Mazda CX-5</p>
+                <p><b>Car rego:</b> NSW DKP47C</p>
+                <p><b>Comments:</b> Front brakes grinding, can someone look this week?</p>
+              </td>
+              <td>Opened: <b>0</b></td>
+              <td>Not Responded</td>
+              <td>Notes (0)</td>
+              <td><div class="archive">Archive Quote</div><button class="qbtn orange" onclick="openConfirm(this)">QUOTE NOW</button></td>
+            </tr>
+
+            <tr data-name="Mark" data-cost="1" data-phone="0449 112 880" data-email="mark.taylor@gmail.com">
+              <td>08/06/2026<br>08:47 PM</td>
+              <td><svg class="ic jt" style="width:34px;height:34px;" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M7 12a5 5 0 1 0 10 0a5 5 0 0 0 -10 0"/></svg></td>
+              <td class="det">
+                <p><b>Name:</b> Mark Taylor</p>
+                <p><b>Phone:</b> <span class="ph mask">04 ** *** ***</span></p>
+                <p><b>Email:</b> <span class="em mask">m****@*****.com</span></p>
+                <p><b>Location:</b> Darlington, NSW, 2008 (12.67km) from you</p>
+                <p><b>Services:</b> Wheel Alignment</p>
+                <p><b>Car rego:</b> NSW CWN90W</p>
+                <p><b>Comments:</b> Had two new tyres put on, needs a wheel alignment asap.</p>
+              </td>
+              <td>Opened: <b>0</b></td>
+              <td>Not Responded</td>
+              <td>Notes (0)</td>
+              <td><div class="archive">Archive Quote</div><button class="qbtn blue" onclick="openConfirm(this)">QUOTE NOW</button></td>
+            </tr>
+
+            <tr data-name="Priya" data-cost="3" data-phone="0406 220 191" data-email="priya.nair@gmail.com">
+              <td>07/06/2026<br>02:20 PM</td>
+              <td><svg class="ic jt" style="width:34px;height:34px;" viewBox="0 0 24 24"><path d="M4 8a1 1 0 0 1 1 -1h13a1 1 0 0 1 1 1v8a1 1 0 0 1 -1 1h-13a1 1 0 0 1 -1 -1z"/><path d="M22 11v2"/><path d="M8 10v4"/><path d="M12 10v4"/></svg></td>
+              <td class="det">
+                <p><b>Name:</b> Priya Nair</p>
+                <p><b>Phone:</b> <span class="ph mask">04 ** *** ***</span></p>
+                <p><b>Email:</b> <span class="em mask">p****@*****.com</span></p>
+                <p><b>Location:</b> Cabramatta, NSW, 2166 (15.07km) from you</p>
+                <p><b>Services:</b> Batteries &amp; Lights</p>
+                <p><b>Vehicle:</b> 2023 Toyota Corolla</p>
+                <p><b>Car rego:</b> NSW FDZ89F</p>
+                <p><b>Comments:</b> Replace battery for car.</p>
+              </td>
+              <td>Opened: <b>0</b></td>
+              <td>Not Responded</td>
+              <td>Notes (0)</td>
+              <td><div class="archive">Archive Quote</div><button class="qbtn orange" onclick="openConfirm(this)">QUOTE NOW</button></td>
+            </tr>
+
+            <tr data-name="Dane" data-cost="4" data-phone="0413 905 612" data-email="dane.wallace@gmail.com">
+              <td>05/06/2026<br>10:45 AM</td>
+              <td><svg class="ic jt" style="width:34px;height:34px;" viewBox="0 0 24 24"><path d="M3 21h4l13 -13a1.5 1.5 0 0 0 -4 -4l-13 13v4"/><path d="M14.5 5.5l4 4"/></svg></td>
+              <td class="det">
+                <p><b>Name:</b> Dane Wallace</p>
+                <p><b>Phone:</b> <span class="ph mask">04 ** *** ***</span></p>
+                <p><b>Email:</b> <span class="em mask">d****@*****.com</span></p>
+                <p><b>Location:</b> Caringbah, NSW, 2229 (23.21km) from you</p>
+                <p><b>Services:</b> New Tyres (3–4)</p>
+                <p><b>Car rego:</b> NSW YNZ68W</p>
+                <p><b>Comments:</b> Needing 4 new tyres and to repair a spare with a nail puncture.</p>
+              </td>
+              <td>Opened: <b>0</b></td>
+              <td>Not Responded</td>
+              <td>Notes (0)</td>
+              <td><div class="archive">Archive Quote</div><button class="qbtn orange" onclick="openConfirm(this)">QUOTE NOW</button></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Interactive mock · phone &amp; email are masked until you spend credits · customer data is placeholder, not real · <a href="#" onclick="restartDemo();return false;">↺ Restart from the email</a></p>
+    </div>
+  </div>
+
+  <div class="overlay" id="modal">
+    <div class="mcard">
+      <p id="m-title" style="font-size:17px;font-weight:600;margin:0 0 14px;">Contact Sarah?</p>
+      <div style="background:var(--info-bg);border-radius:8px;padding:14px;text-align:center;margin-bottom:12px;">
+        <p style="margin:0;"><span id="m-cost" style="font-size:24px;font-weight:700;color:var(--info);">4 credits</span></p>
+        <p style="font-size:13px;color:var(--info);margin:2px 0 0;">to unlock their phone &amp; email</p>
+      </div>
+      <p id="m-bal" style="font-size:13px;color:var(--t2);text-align:center;margin:0 0 14px;">You have <b style="color:var(--t1);">40 credits</b> — <b style="color:var(--t1);">36</b> left after this</p>
+      <div id="m-note" style="display:flex;align-items:flex-start;gap:8px;background:#f4f5f7;border-radius:8px;padding:11px 12px;margin-bottom:16px;">
+        <svg class="ic" style="width:16px;height:16px;color:var(--t2);margin-top:1px;" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></svg>
+        <span style="font-size:12px;color:var(--t2);">Credits are used the moment you unlock, and it's final. If the lead's a genuine dud, the Lead Quality Guarantee refunds them.</span>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="cbtn ghost" onclick="closeConfirm()">Cancel</button>
+        <button class="cbtn primary" id="m-confirm" onclick="confirmUnlock()">Use 4 credits &amp; unlock</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="topup">
+    <div class="mcard" style="max-width:640px;padding:0;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;">
+
+      <div style="padding:22px 28px 0;">
+        <p style="font-size:22px;font-weight:700;margin:0 0 2px;">Your Next Customer Is a Few Clicks Away</p>
+        <p style="font-size:14px;font-weight:600;color:var(--t2);margin:0 0 12px;">Why are Mechanics &amp; Tyre Shops using Auto Hero for Lead Generation?</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;background:var(--bg-secondary);border-radius:var(--r-md);padding:12px 14px;margin-bottom:10px;">
+          <p class="row" style="font-size:13px;margin:0;color:var(--t1);gap:7px;"><svg class="ic" style="width:15px;height:15px;color:var(--success);flex:none;" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></svg><span><b>Keep 100%</b> — zero commission</span></p>
+          <p class="row" style="font-size:13px;margin:0;color:var(--t1);gap:7px;"><svg class="ic" style="width:15px;height:15px;color:var(--success);flex:none;" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></svg><span><b>No Cost Per Click</b> — unlike Google Ads</span></p>
+          <p class="row" style="font-size:13px;margin:0;color:var(--t1);gap:7px;"><svg class="ic" style="width:15px;height:15px;color:var(--success);flex:none;" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></svg><span><b>Quality Guaranteed</b> — verified, matched leads</span></p>
+          <p class="row" style="font-size:13px;margin:0;color:var(--t1);gap:7px;"><svg class="ic" style="width:15px;height:15px;color:var(--success);flex:none;" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></svg><span><b>Dud lead?</b> Refunded, no questions</span></p>
+        </div>
+
+        <p style="text-align:center;font-weight:700;font-size:15px;margin:0 0 1px;">Real jobs. Real customers. Zero risk.</p>
+        <p style="text-align:center;font-size:13px;color:var(--t2);margin:0 0 10px;">👇 Select a pack and start today.</p>
+      </div>
+
+      <div style="padding:0 28px;overflow-y:auto;flex:1;min-height:0;">
+        <div class="packs">
+          <div class="pack" data-credits="20" data-price="54" onclick="selectPack(this)">
+            <div><span class="pc-cr">Pay as you go</span><span class="pc-rate">20 credits, one-off · $2.70 / credit</span></div>
+            <span class="pc-price">$54</span>
+          </div>
+          <div class="pack" data-credits="22" data-price="53" data-membership="1" onclick="selectPack(this)">
+            <div><span class="pc-cr">Membership<span class="pc-badge">Cheaper</span></span><span class="pc-rate">22 credits every month · $2.41 / credit</span></div>
+            <div style="text-align:right;"><span class="pc-price">$53<span style="font-size:12px;font-weight:500;color:var(--t2);">/mo</span></span></div>
+          </div>
+          <div class="pack" data-credits="50" data-price="109" data-membership="1" onclick="selectPack(this)">
+            <div>
+              <span class="pc-cr">Pro Membership<span class="pc-badge save">Best value</span></span>
+              <span class="pc-rate">50 credits every month · $2.18 / credit</span>
+              <ul style="margin:10px 0 0;padding-left:18px;font-size:13px;color:var(--t2);line-height:1.7;">
+                <li>Quote-open alerts — know the moment a customer opens your quote</li>
+                <li>Data analytics on your leads &amp; conversion</li>
+                <li>Priority placement in Auto Hero listings</li>
+              </ul>
+            </div>
+            <div style="text-align:right;"><span class="pc-price">$109<span style="font-size:12px;font-weight:500;color:var(--t2);">/mo</span></span></div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--t3);text-align:center;margin:14px 0 16px;">Setup call included on membership plans · 3-month minimum, then cancel anytime</p>
+
+        <details class="faq"><summary>How many credits does a lead cost?<svg class="ic" style="width:17px;height:17px;color:var(--t2);" viewBox="0 0 24 24"><path d="M6 9l6 6l6 -6"/></svg></summary><div class="body">
+          <p style="margin:0;">The bigger the job, the more credits the lead costs — because it's worth more to your business:</p>
+          <p class="cat">Tyres</p>
+          <div class="exrow"><span>Puncture repair, wheel alignment</span><span class="pill">1 credit</span></div>
+          <div class="exrow"><span>1–2 tyres</span><span class="pill">2 credits</span></div>
+          <div class="exrow"><span>3–4 tyres</span><span class="pill">4 credits</span></div>
+          <p class="cat">Mechanical</p>
+          <div class="exrow"><span>Pink slip / rego check</span><span class="pill">1 credit</span></div>
+          <div class="exrow"><span>Battery replacement</span><span class="pill">3 credits</span></div>
+          <div class="exrow"><span>Log book service</span><span class="pill">4 credits</span></div>
+          <div class="exrow"><span>Brake works</span><span class="pill">4 credits</span></div>
+          <p style="display:flex;align-items:flex-start;gap:7px;margin:14px 0 0;"><svg class="ic" style="width:15px;height:15px;margin-top:2px;color:var(--t2);" viewBox="0 0 24 24"><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"/></svg><span>You'll always see exactly how many credits a lead costs before you unlock it — nothing's charged until you choose to contact the customer.</span></p>
+        </div></details>
+        <details class="faq"><summary>How does membership work?<svg class="ic" style="width:17px;height:17px;color:var(--t2);" viewBox="0 0 24 24"><path d="M6 9l6 6l6 -6"/></svg></summary><div class="body">Membership gives you credits every month at a lower per-credit rate than pay-as-you-go — the Pro plan also adds quote-open alerts, data analytics, and priority placement. It includes a personal setup call and runs for a 3-month minimum, then cancel anytime.</div></details>
+        <details class="faq" style="margin-bottom:0;"><summary>Lead Quality Guarantee<svg class="ic" style="width:17px;height:17px;color:var(--t2);" viewBox="0 0 24 24"><path d="M6 9l6 6l6 -6"/></svg></summary><div class="body">Every lead is verified, local, and matched to your services. If one's a genuine dud, we refund the credits.</div></details>
+        <p style="font-size:12px;color:var(--t3);margin:14px 0 0;">Visual mock — no real payment is taken.</p>
+      </div>
+
+      <div style="padding:14px 28px 22px;border-top:1px solid var(--b-tertiary);display:flex;gap:10px;flex:none;">
+        <button class="cbtn ghost" onclick="closeTopup()">Cancel</button>
+        <button class="cbtn primary topup-confirm-btn" onclick="goToCheckout()" disabled>Select a pack</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="checkout">
+    <div class="mcard" style="max-width:420px;">
+      <div class="wm"><span class="b">AUTO</span><span class="r">HERO</span></div>
+      <div style="padding:18px 20px 20px;">
+        <div class="pay-wrap">
+          <p style="font-size:13px;color:var(--brand);font-weight:600;margin:0 0 12px;">Last step before your credits</p>
+          <div class="sarah" style="margin-bottom:16px;"><div class="av">AH</div><div><p style="font-size:14px;font-weight:600;margin:0;">Activating your top up</p><p style="font-size:12px;color:var(--t2);margin:0;">Your local leads are waiting</p></div></div>
+          <div style="background:var(--bg-secondary);border-radius:var(--r-md);padding:14px;margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;"><span id="coName" style="font-size:14px;font-weight:500;">—</span><span id="coPrice" style="font-size:14px;">—</span></div>
+            <p id="coDesc" style="font-size:12px;color:var(--t2);margin:4px 0 12px;">—</p>
+            <div style="border-top:1px solid var(--b-secondary);padding-top:10px;display:flex;justify-content:space-between;"><span style="font-size:14px;font-weight:500;">Total today</span><span id="coTotal" style="font-size:14px;font-weight:500;">—</span></div>
+          </div>
+          <label class="fld" style="margin-top:0;">Card number</label>
+          <input type="text" placeholder="1234 5678 9012 3456">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div><label class="fld">Expiry</label><input type="text" placeholder="MM / YY"></div>
+            <div><label class="fld">CVC</label><input type="text" placeholder="123"></div>
+          </div>
+          <label class="fld">Name on card</label>
+          <input type="text" placeholder="Jane's Tyre &amp; Auto">
+          <p class="row" style="font-size:12px;color:var(--t3);margin:14px 0 14px;gap:6px;"><svg class="ic" style="width:14px;height:14px;" viewBox="0 0 24 24"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z"/><path d="M8 11v-4a4 4 0 1 1 8 0v4"/></svg>Secure, encrypted payment</p>
+          <div style="text-align:center;margin-bottom:12px;"><span style="color:var(--amber);font-size:13px;letter-spacing:1px;">★★★★★</span> <span style="font-size:12px;color:var(--t2);">4.6 from 7,651 reviews · Australia's #1 reviewed</span></div>
+          <button class="ctabtn" id="coPayBtn" onclick="confirmTopup()">Pay &amp; unlock my credits</button>
+          <p id="coGuar" style="font-size:12px;color:var(--t3);text-align:center;margin:10px 0 0;">Visual mock · dud leads always refunded</p>
+          <p style="text-align:center;margin:12px 0 0;"><a href="#" onclick="backToTopup();return false;" style="font-size:12px;color:var(--t3);">← Back to plans</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /dashboard -->
+
+<script>
+  /* ---------- journey ---------- */
+  var chosenCredits=40;
+  function markStepDone(n){
+    var s=document.querySelector('#journey .step[data-node="'+n+'"]');
+    if(s){s.classList.remove('active');s.classList.add('done');s.querySelector('.num').textContent='✓';}
+    var b=document.querySelector('#journey .bar[data-bar="'+n+'"]');
+    if(b){b.style.background='#1690D4';}
+  }
+  function openComplementary(){
+    markStepDone(1);
+    switchToDashboard();
+    document.getElementById('compQuote').style.display='flex';
+  }
+  function closeComplementary(){
+    document.getElementById('compQuote').style.display='none';
+  }
+  function useComplementary(){
+    markStepDone(2);
+    markStepDone(3);
+    document.getElementById('compQuote').style.display='none';
+  }
+  function switchToDashboard(){
+    document.getElementById('journey').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    document.body.classList.remove('mode-journey');
+    document.body.classList.add('mode-app');
+    balance=chosenCredits;
+    refreshCredits();
+    window.scrollTo({top:0,behavior:'auto'});
+  }
+  function enterDashboard(){
+    markStepDone(3);
+    switchToDashboard();
+  }
+  function restartDemo(){location.reload();}
+
+  /* ---------- dashboard ---------- */
+  var balance=40, currentRow=null, selectedPack=null, LOW=5;
+  function plural(n){return n+(n===1?' credit':' credits');}
+  function refreshCredits(){
+    document.querySelectorAll('.bal-num').forEach(function(e){e.textContent=balance;});
+    var chip=document.getElementById('creditChip');
+    if(balance<=LOW){chip.classList.add('low');}else{chip.classList.remove('low');}
+  }
+  function openConfirm(btn){
+    currentRow=btn.closest('tr');
+    var name=currentRow.dataset.name, cost=+currentRow.dataset.cost;
+    document.getElementById('m-cost').textContent=plural(cost);
+    var cbtn=document.getElementById('m-confirm');
+    var note=document.getElementById('m-note');
+    if(balance<cost){
+      document.getElementById('m-title').textContent='Not enough credits';
+      document.getElementById('m-bal').innerHTML='You have <b style="color:var(--t1);">'+balance+'</b> credits — you need <b style="color:var(--t1);">'+cost+'</b> to contact '+name+'.';
+      note.style.display='none';
+      cbtn.textContent='Top up credits';
+      cbtn.onclick=function(){closeConfirm();openTopup();};
+    }else{
+      document.getElementById('m-title').textContent='Contact '+name+'?';
+      document.getElementById('m-bal').innerHTML='You have <b style="color:var(--t1);">'+balance+' credits</b> — <b style="color:var(--t1);">'+(balance-cost)+'</b> left after this';
+      note.style.display='flex';
+      cbtn.textContent='Use '+plural(cost)+' & unlock';
+      cbtn.onclick=confirmUnlock;
+    }
+    document.getElementById('modal').style.display='flex';
+  }
+  function closeConfirm(){document.getElementById('modal').style.display='none';currentRow=null;}
+  function confirmUnlock(){
+    if(!currentRow)return;
+    var cost=+currentRow.dataset.cost;
+    var ph=currentRow.querySelector('.ph'), em=currentRow.querySelector('.em');
+    ph.textContent=currentRow.dataset.phone; ph.classList.remove('mask');
+    em.textContent=currentRow.dataset.email; em.classList.remove('mask');
+    var b=currentRow.querySelector('.qbtn');
+    b.textContent='✓ UNLOCKED'; b.className='qbtn done'; b.onclick=null;
+    balance-=cost;
+    refreshCredits();
+    closeConfirm();
+  }
+  function openTopup(){
+    selectedPack=null;
+    document.querySelectorAll('.pack').forEach(function(p){p.classList.remove('sel');});
+    document.querySelectorAll('.topup-confirm-btn').forEach(function(b){
+      b.disabled=true; b.textContent='Select a pack';
+    });
+    document.getElementById('topup').style.display='flex';
+  }
+  function closeTopup(){document.getElementById('topup').style.display='none';}
+  function selectPack(el){
+    document.querySelectorAll('.pack').forEach(function(p){p.classList.remove('sel');});
+    el.classList.add('sel');
+    selectedPack={credits:+el.dataset.credits, price:+el.dataset.price, membership:!!el.dataset.membership};
+    var label=selectedPack.membership
+      ? 'Subscribe · $'+selectedPack.price+'/mo'
+      : 'Add '+selectedPack.credits+' credits · $'+selectedPack.price;
+    document.querySelectorAll('.topup-confirm-btn').forEach(function(b){
+      b.disabled=false;
+      b.textContent=label;
+      b.classList.remove('pulse-once');
+      void b.offsetWidth; // restart animation on re-selection
+      b.classList.add('pulse-once');
+    });
+  }
+  function goToCheckout(){
+    if(!selectedPack)return;
+    var name=document.getElementById('coName'), price=document.getElementById('coPrice'),
+        desc=document.getElementById('coDesc'), total=document.getElementById('coTotal'),
+        btn=document.getElementById('coPayBtn'), guar=document.getElementById('coGuar');
+    if(selectedPack.membership){
+      var planName=selectedPack.price>=109?'Pro Membership':'Membership';
+      name.textContent=planName;
+      price.textContent='$'+selectedPack.price+'/mo';
+      desc.textContent=selectedPack.credits+' credits every month · setup call included · 3-month minimum';
+      total.textContent='$'+selectedPack.price+'.00 (incl. GST)';
+      btn.textContent='Subscribe $'+selectedPack.price+'/mo & unlock';
+      guar.textContent='Cancel anytime after 3 months · dud leads refunded';
+    }else{
+      name.textContent='Pay as you go — '+selectedPack.credits+' credits';
+      price.textContent='$'+selectedPack.price;
+      desc.textContent='One-off top up · credits added instantly';
+      total.textContent='$'+selectedPack.price+'.00 (incl. GST)';
+      btn.textContent='Pay $'+selectedPack.price+' & unlock my credits';
+      guar.textContent='Visual mock · dud leads always refunded';
+    }
+    document.getElementById('topup').style.display='none';
+    document.getElementById('checkout').style.display='flex';
+  }
+  function backToTopup(){
+    document.getElementById('checkout').style.display='none';
+    document.getElementById('topup').style.display='flex';
+  }
+  function confirmTopup(){
+    if(!selectedPack)return;
+    balance+=selectedPack.credits;
+    refreshCredits();
+    document.getElementById('checkout').style.display='none';
+    closeTopup();
+  }
+</script>
+</body>
+</html>
