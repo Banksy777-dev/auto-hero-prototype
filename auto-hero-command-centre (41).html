@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auto Hero — Command Centre</title>
+<style>
+  :root{--blue:#045C91;--blue-d:#033A5C;--red:#A83A0C;--ink:#15171c;--t1:#1a1d23;--t2:#374151;--t3:#525862;--line:#e8eaed;--bg:#f4f6f8;--card:#fff;--cool:#0B6B54;--cool-bg:#E1F4EE;--warm:#8F5608;--warm-bg:#FBF0DC;--hot:#A83A0C;--hot-bg:#FBE9E0;--sold:#0B6B54;--sold-bg:#E1F4EE;--ok:#0B6B54;--ok-bg:#E1F4EE;--track:#dfe3e8;--bar:#045C91;--amber:#D9A404;--peak:#A83A0C;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+  .pagehead{background:#fff;border-bottom:1px solid var(--line);padding:20px 16px 0;position:sticky;top:0;z-index:20;}
+  .pagehead .brandrow, .pagehead .tabs{max-width:1180px;margin-left:auto;margin-right:auto;}
+  .brandrow{display:flex;align-items:baseline;gap:11px;}
+  .logo{font-size:19px;font-weight:800;letter-spacing:.4px;}
+  .logo .a{color:var(--blue);} .logo .h{color:var(--red);}
+  .brandrow h1{font-size:14px;font-weight:600;color:var(--t2);margin:0;}
+  .tabs{display:flex;gap:4px;margin-top:14px;}
+  .tab{border:none;background:none;font-size:15px;font-weight:700;color:var(--t3);padding:11px 20px;cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:8px;}
+  .tab.on{color:var(--blue);border-bottom-color:var(--blue);}
+  .tab .tsub{font-size:11px;font-weight:400;color:var(--t3);}
+  .tab.on .tsub{color:var(--blue);}
+  .tabpanel{display:none;} .tabpanel.on{display:block;}
+  .sectionband{max-width:1180px;margin:22px auto 0;padding:0 16px;}
+  .sectionband .lbl{display:flex;align-items:center;gap:12px;}
+  .sectionband .lbl h2{font-size:16px;font-weight:800;margin:0;color:var(--t1);}
+  .sectionband .lbl .pill{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 10px;border-radius:20px;}
+  .pill.fc{background:#DCEAF7;color:var(--blue-d);} .pill.td{background:var(--hot-bg);color:var(--hot);}
+  .pill.pr{background:#E1F4EE;color:#0B6B54;}
+  .pill.cf{background:#F2E2C2;color:#8F5608;}
+  #sec-customer{max-width:1180px;margin:0 auto;padding:0 16px 30px;}
+  #sec-customer .cf-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:14px;}
+  #sec-customer .cf-openlink{font-size:13px;font-weight:700;color:var(--blue-d);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:8px 14px;white-space:nowrap;}
+  #sec-customer .cf-openlink:hover{background:#f5fbff;}
+  #sec-customer .cf-hint{font-size:12px;color:#525862;}
+  #sec-customer .cf-frame-wrap{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(20,30,50,.04);}
+  #sec-customer iframe{width:100%;height:82vh;min-height:600px;border:0;display:block;}
+  #sec-pricing .wrap{max-width:900px;margin:0 auto;padding:0 16px 30px;}
+  #sec-pricing .pricecard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 1px 3px rgba(20,30,50,.04);}
+  #sec-pricing .ratebar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fafbfc;border:1px solid var(--line);border-radius:10px;padding:13px 16px;margin-bottom:18px;}
+  #sec-pricing .ratebar label{font-size:13px;font-weight:600;color:var(--t1);}
+  #sec-pricing .ratebar input{width:90px;text-align:center;padding:8px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;}
+  #sec-pricing .ratebar input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(22,144,212,.12);}
+  #sec-pricing .ratebar .hint{font-size:11.5px;color:var(--t3);}
+  #sec-pricing .tablewrap{overflow-x:auto;}
+  #sec-pricing table.pricetable{width:100%;border-collapse:collapse;}
+  #sec-pricing table.pricetable th{text-align:left;font-weight:700;font-size:10.5px;color:var(--t3);padding:10px 12px;border-bottom:1px solid var(--line);text-transform:uppercase;letter-spacing:.04em;}
+  #sec-pricing table.pricetable th.r,#sec-pricing table.pricetable td.r{text-align:right;}
+  #sec-pricing table.pricetable th.c,#sec-pricing table.pricetable td.c{text-align:center;}
+  #sec-pricing table.pricetable td{padding:9px 12px;border-bottom:1px solid #eceef1;font-size:13.5px;}
+  #sec-pricing tr.catrow td{background:#fafbfc;font-weight:700;font-size:11px;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;padding-top:14px;}
+  #sec-pricing .cr{width:56px;text-align:center;padding:6px;border:1px solid var(--line);border-radius:7px;font-size:13.5px;font-family:inherit;}
+  #sec-pricing .cr:focus{outline:none;border-color:var(--blue);}
+  #sec-pricing .dollar{color:var(--t2);font-variant-numeric:tabular-nums;font-weight:600;}
+  #sec-pricing .tg{position:relative;display:inline-block;width:38px;height:22px;vertical-align:middle;}
+  #sec-pricing .tg input{opacity:0;width:0;height:0;}
+  #sec-pricing .tg .sl{position:absolute;inset:0;background:var(--line);border-radius:999px;transition:.15s;cursor:pointer;}
+  #sec-pricing .tg .sl:before{content:"";position:absolute;height:16px;width:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+  #sec-pricing .tg input:checked + .sl{background:var(--sold);}
+  #sec-pricing .tg input:checked + .sl:before{transform:translateX(16px);}
+  #sec-pricing .foot{font-size:11.5px;color:var(--t3);margin:16px 0 0;line-height:1.5;}
+  #sec-pricing .tierrow{margin:16px 0 18px;padding:14px 16px;background:#f5fbff;border:1px solid #C3DEF2;border-radius:10px;}
+  #sec-pricing .tierlabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#525862;margin-bottom:10px;}
+  #sec-pricing .tierpills{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  #sec-pricing .tierpill{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:11px 13px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:3px;transition:.12s;}
+  #sec-pricing .tierpill:hover{border-color:var(--blue);}
+  #sec-pricing .tierpill.active{border-color:var(--blue);background:#EBF5FC;box-shadow:0 0 0 2px rgba(4,92,145,.15);}
+  #sec-pricing .tp-name{font-size:12.5px;font-weight:700;color:#111827;}
+  #sec-pricing .tp-sub{font-size:11px;color:#525862;}
+  #sec-pricing .tp-rate{font-size:14px;font-weight:800;color:var(--blue-d);margin-top:2px;}
+  #sec-pricing .th-sub{display:block;font-weight:600;font-size:9.5px;color:#8b929c;text-transform:none;letter-spacing:0;margin-top:2px;}
+  #sec-pricing .tiercost{font-variant-numeric:tabular-nums;color:#374151;}
+  #sec-pricing .tiercost.custom{font-weight:700;color:var(--blue-d);}
+  @media(max-width:760px){#sec-pricing .tierpills{grid-template-columns:1fr;}}
+  #sec-pricing .pr-addbtn{border:none;background:var(--blue);color:#fff;border-radius:8px;padding:9px 16px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  #sec-pricing .pr-addbtn:hover{background:var(--blue-d);}
+  #sec-pricing .addform{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:#EBF5FC;border:1px solid #C3DEF2;border-radius:10px;padding:16px;margin-bottom:16px;}
+  #sec-pricing .addform .afgrp{display:flex;flex-direction:column;gap:5px;}
+  #sec-pricing .addform .afgrp.narrow{grid-column:span 1;}
+  #sec-pricing .addform label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);}
+  #sec-pricing .addform input,#sec-pricing .addform select{border:1px solid var(--line);border-radius:7px;padding:8px 10px;font-size:13px;font-family:inherit;}
+  #sec-pricing .addform input:focus,#sec-pricing .addform select:focus{outline:none;border-color:var(--blue);}
+  #sec-pricing .pr-save{border:none;background:var(--sold);color:#fff;border-radius:7px;padding:9px 14px;font-size:12.5px;font-weight:700;cursor:pointer;}
+  #sec-pricing .pr-save:hover{background:#08432F;}
+  #sec-pricing .pr-remove{border:none;background:none;color:var(--t3);font-size:18px;line-height:1;cursor:pointer;padding:2px 8px;border-radius:6px;}
+  #sec-pricing .pr-remove:hover{background:var(--hot-bg);color:var(--hot);}
+  @media(max-width:760px){#sec-pricing .addform{grid-template-columns:repeat(2,1fr);}}
+  .sectionband .lbl .ln{flex:1;height:2px;background:var(--line);}
+  .sectionband p.note{font-size:12px;color:var(--t3);margin:6px 2px 0;}
+  #sec-forecast > .wrap, #sec-today > .wrap{padding-top:14px !important;padding-bottom:20px !important;}
+:root{
+    --blue:#045C91; --blue-d:#033A5C; --red:#A83A0C; --ink:#15171c;
+    --t1:#1a1d23; --t2:#374151; --t3:#525862; --line:#e6e8ec;
+    --bg:#f4f6f8; --card:#fff; --ok:#0B6B54; --ok-bg:#E1F4EE; --track:#dfe3e8;
+    --bar:#045C91;
+  }#sec-forecast *{box-sizing:border-box;}#sec-forecast body{margin:0;background:var(--bg);color:var(--t1);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;padding:28px 16px 60px;}#sec-forecast .wrap{max-width:1000px;margin:0 auto;}#sec-forecast .masthead{display:flex;align-items:baseline;gap:12px;margin-bottom:4px;}#sec-forecast .logo{font-size:19px;font-weight:800;letter-spacing:.4px;}#sec-forecast .logo .a{color:var(--blue);}#sec-forecast .logo .h{color:var(--red);}#sec-forecast .masthead h1{font-size:15px;font-weight:600;color:var(--t2);margin:0;}#sec-forecast .sub{font-size:13px;color:var(--t3);margin:0 0 22px;max-width:680px;line-height:1.5;}#sec-forecast .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-bottom:16px;}#sec-forecast .card h2{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--t3);margin:0 0 4px;}#sec-forecast .card .csub{font-size:12px;color:var(--t3);margin:0 0 18px;}#sec-forecast .globals{display:grid;grid-template-columns:1fr 1fr;gap:22px 30px;}@@M0@@
+  .ctrl .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;}#sec-forecast .ctrl label{font-size:13.5px;font-weight:500;}#sec-forecast .ctrl .val{font-size:15px;font-weight:700;color:var(--blue);font-variant-numeric:tabular-nums;}#sec-forecast .ctrl .hint{font-size:11px;color:var(--t3);margin:7px 0 0;line-height:1.4;}#sec-forecast input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;background:var(--track);outline:none;margin:0;}#sec-forecast input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:19px;height:19px;border-radius:50%;background:var(--blue);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);}#sec-forecast input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:50%;background:var(--blue);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);}#sec-forecast /* type table */
+  table.types{width:100%;border-collapse:collapse;}#sec-forecast table.types th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);text-align:right;padding:0 0 10px 8px;}#sec-forecast table.types th.l{text-align:left;padding-left:0;}#sec-forecast table.types td{font-size:13px;padding:11px 0 11px 8px;border-top:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums;}#sec-forecast table.types td.l{text-align:left;padding-left:0;}#sec-forecast .tname{font-weight:600;color:var(--t1);}#sec-forecast .tcr{font-size:11px;color:var(--t3);}#sec-forecast .creditpill{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 8px;background:#eef1f4;color:var(--t1);border-radius:20px;font-weight:700;font-size:12.5px;font-variant-numeric:tabular-nums;}#sec-forecast .sharecell{display:flex;align-items:center;gap:10px;justify-content:flex-end;}#sec-forecast .sharecell input{width:88px;}#sec-forecast .sharepct{width:38px;text-align:right;font-weight:600;color:var(--blue);}#sec-forecast .revbar-wrap{position:relative;min-width:120px;background:#eef1f4;border-radius:5px;height:22px;overflow:hidden;}#sec-forecast .revbar{position:absolute;left:0;top:0;bottom:0;background:var(--bar);border-radius:5px;}#sec-forecast .revbar-txt{position:relative;z-index:1;font-size:11.5px;font-weight:700;color:#fff;line-height:22px;padding-right:8px;text-shadow:0 1px 1px rgba(0,0,0,.25);}#sec-forecast .revbar-txt.dark{color:var(--t1);text-shadow:none;padding-left:8px;text-align:left;}#sec-forecast tr.totalrow td{border-top:2px solid var(--t1);font-weight:700;padding-top:12px;}#sec-forecast /* results band */
+  .band{background:var(--ink);border-radius:14px;padding:24px 26px;color:#fff;display:flex;flex-wrap:wrap;gap:30px;align-items:flex-end;}#sec-forecast .band .b{display:flex;flex-direction:column;}#sec-forecast .band .k{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#9aa1ab;margin-bottom:6px;}#sec-forecast .band .v{font-size:32px;font-weight:800;letter-spacing:-.5px;line-height:1;font-variant-numeric:tabular-nums;}#sec-forecast .band .v.blue{color:#4FB3E8;}#sec-forecast .band .v.sm{font-size:22px;}#sec-forecast .band .u{font-size:12px;color:#9aa1ab;margin-top:5px;}#sec-forecast .summary{font-size:14px;color:var(--t1);margin:16px 2px 0;line-height:1.55;padding:13px 15px;background:#E3F1FA;border:1px solid #C3DEF2;border-radius:10px;}#sec-forecast .summary b{color:var(--blue-d);}#sec-forecast .note{font-size:11.5px;padding:10px 12px;border-radius:8px;margin:14px 0 0;line-height:1.5;}#sec-forecast .funnel{display:flex;align-items:stretch;gap:6px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 14px;margin-bottom:14px;overflow-x:auto;}#sec-forecast .fstep{flex:1;min-width:92px;text-align:center;padding:4px 6px;}#sec-forecast .fstep .fk{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);margin-bottom:6px;}#sec-forecast .fstep .fv{font-size:22px;font-weight:800;letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1;color:var(--t1);}#sec-forecast .fstep .fu{font-size:10.5px;color:var(--t3);margin-top:5px;}#sec-forecast .fstep.hot .fv{color:var(--blue-d);}#sec-forecast .fstep.warm .fv{color:var(--warm);}
+  #sec-forecast .tierrow{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line);}
+  #sec-forecast .tierlabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#525862;margin-bottom:10px;}
+  #sec-forecast .tierpills{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  #sec-forecast .tierpill{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:11px 13px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:3px;transition:.12s;}
+  #sec-forecast .tierpill:hover{border-color:var(--blue);background:#f5fbff;}
+  #sec-forecast .tierpill.active{border-color:var(--blue);background:#EBF5FC;box-shadow:0 0 0 2px rgba(4,92,145,.15);}
+  #sec-forecast .tp-name{font-size:12.5px;font-weight:700;color:#111827;}
+  #sec-forecast .tp-sub{font-size:11px;color:#525862;}
+  #sec-forecast .tp-rate{font-size:14px;font-weight:800;color:var(--blue-d);margin-top:2px;}
+  @media(max-width:680px){#sec-forecast .tierpills{grid-template-columns:1fr;}}#sec-forecast .farrow{display:flex;flex-direction:column;align-items:center;justify-content:center;color:#c4c9d0;font-size:16px;flex:none;gap:2px;}#sec-forecast .farrow .fpct{font-size:10px;font-weight:700;color:var(--ok);background:var(--ok-bg);border-radius:5px;padding:1px 5px;white-space:nowrap;}#sec-forecast .convline{font-size:13px;color:var(--t1);text-align:center;margin:12px 2px 0;padding:11px 14px;background:#E3F1FA;border:1px solid #C3DEF2;border-radius:10px;line-height:1.5;}#sec-forecast .convline b{color:var(--blue-d);}@@M1@@
+  .note.warn{background:#FBF0DC;color:#8F5608;}#sec-forecast .note.ok{background:var(--ok-bg);color:#0A5747;}#sec-forecast .foot{font-size:11.5px;color:var(--t3);margin:16px 2px 0;line-height:1.55;}#sec-forecast .foot b{color:var(--t2);}#sec-forecast .src{font-size:11px;color:var(--t3);background:#eef1f4;border-radius:8px;padding:8px 11px;margin:0 0 18px;line-height:1.45;}#sec-forecast .switch{position:relative;display:inline-block;width:46px;height:26px;cursor:pointer;}#sec-forecast .switch input{opacity:0;width:0;height:0;}#sec-forecast .switch .track{position:absolute;inset:0;background:#cfd4da;border-radius:26px;transition:.2s;}#sec-forecast .switch .track:before{content:"";position:absolute;height:20px;width:20px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3);}#sec-forecast .switch input:checked + .track{background:var(--blue);}#sec-forecast .switch input:checked + .track:before{transform:translateX(20px);}#sec-forecast .soldbar{position:relative;height:14px;background:linear-gradient(90deg,#F7E4DA,#F2E2C2,#CDEEE3);border-radius:8px;margin:6px 0 10px;}#sec-forecast .soldbar-fill{position:absolute;left:0;top:0;bottom:0;background:rgba(22,144,212,.25);border-radius:8px;transition:width .15s;}#sec-forecast .soldbar-mark{position:absolute;top:-3px;width:4px;height:20px;background:var(--blue-d);border-radius:2px;transition:left .15s;}#sec-forecast .soldnote{font-size:12.5px;color:var(--t1);margin:0;line-height:1.5;}#sec-forecast .soldnote b{color:var(--blue-d);}@media(max-width:760px){#sec-forecast .globals{grid-template-columns:1fr;gap:16px;}}@media(max-width:680px){#sec-forecast .funnel{gap:2px;}#sec-forecast .fstep{min-width:78px;}#sec-forecast .fstep .fv{font-size:18px;}#sec-forecast .farrow .fx{font-size:12px;}#sec-forecast .farrow .fpct{font-size:9px;padding:1px 3px;}}
+  #sec-forecast .pricetag-row{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line);}
+  #sec-forecast .pricetag-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);margin-bottom:10px;}
+  #sec-forecast .pricetag{display:flex;align-items:center;gap:12px;background:var(--warm-bg);border:1px solid #F2E2C2;border-radius:12px;padding:14px 18px;flex-wrap:wrap;}
+  #sec-forecast .pt-name{font-size:13px;font-weight:700;color:var(--t1);margin-right:auto;}
+  #sec-forecast .pt-was{font-size:16px;color:var(--t3);text-decoration:line-through;text-decoration-color:var(--hot);text-decoration-thickness:2px;font-variant-numeric:tabular-nums;}
+  #sec-forecast .pt-arrow{color:var(--warm);font-size:15px;font-weight:700;}
+  #sec-forecast .pt-now{font-size:22px;font-weight:800;color:#08432F;font-variant-numeric:tabular-nums;}
+  #sec-forecast .pt-badge{background:var(--warm);color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;white-space:nowrap;}
+  #sec-forecast .splitrow{margin-top:18px;}
+  #sec-forecast .splitlabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);margin-bottom:9px;}
+  #sec-forecast .splitbar{display:flex;height:20px;border-radius:8px;overflow:hidden;background:#eef1f4;}
+  #sec-forecast .splitbar-fresh{background:var(--blue);height:100%;transition:width .2s;}
+  #sec-forecast .splitbar-rec{background:var(--warm);height:100%;transition:width .2s;}
+  #sec-forecast .splitkey{display:flex;gap:22px;flex-wrap:wrap;margin-top:9px;font-size:12.5px;color:var(--t2);}
+  #sec-forecast .splitkey b{color:var(--t1);}
+  #sec-forecast .splitkey i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:middle;}
+  #sec-forecast i.dot-fresh{background:var(--blue);}
+  #sec-forecast i.dot-rec{background:var(--warm);}
+  /* ===== TODAY ===== */
+  #sec-today .wrap{max-width:1180px;margin:0 auto;padding:0 16px;}
+  #sec-today .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:14px;}
+  @media(max-width:1100px){#sec-today .kpis{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:820px){#sec-today .kpis{grid-template-columns:repeat(2,1fr);}}
+  #sec-today .convsummary{font-size:13px;color:var(--t1);background:#E3F1FA;border:1px solid #C3DEF2;border-radius:10px;padding:11px 15px;margin:0 0 20px;line-height:1.55;}
+  #sec-today .convsummary b{color:var(--blue-d);}
+  #sec-today .kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(20,30,50,.04);transition:transform .12s,box-shadow .12s;}
+  #sec-today .kpi:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(20,30,50,.09);}
+  #sec-today .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px;background:var(--blue);}
+  #sec-today .kpi:nth-child(2)::before{background:var(--sold);}
+  #sec-today .kpi:nth-child(3)::before{background:var(--hot);}
+  #sec-today .kpi.dark::before{background:#4CC7A3;}
+  #sec-today .kpi:nth-child(5)::before{background:var(--warm);}
+  #sec-today .kpi .k{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);margin-bottom:9px;display:flex;align-items:center;gap:6px;}
+  #sec-today .kpi .k::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--blue);flex:none;}
+  #sec-today .kpi:nth-child(2) .k::before{background:var(--sold);}
+  #sec-today .kpi:nth-child(3) .k::before{background:var(--hot);}
+  #sec-today .kpi:nth-child(5) .k::before{background:var(--warm);}
+  #sec-today .kpi.dark .k::before{background:#4CC7A3;}
+  #sec-today .kpi .v{font-size:30px;font-weight:800;letter-spacing:-.5px;line-height:1;}
+  #sec-today .kpi .v.green{color:var(--sold);} #sec-today .kpi .v.red{color:var(--hot);}
+  #sec-today .kpi .u{font-size:11px;color:var(--t3);margin-top:7px;}
+  #sec-today .kpi.dark{background:linear-gradient(150deg,#1c1f26,#15171c);}
+  #sec-today .kpi.dark .v{color:#fff;}
+  #sec-today .breakdown{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(20,30,50,.04);}
+  #sec-today .bd-title{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);margin-bottom:12px;}
+  #sec-today .bd-cells{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  #sec-today .bd{flex:1;min-width:90px;border-radius:10px;padding:11px 13px;background:#fafbfc;border:1px solid var(--line);display:flex;flex-direction:column;gap:3px;position:relative;overflow:hidden;}
+  #sec-today .bd::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;}
+  #sec-today .bd.a1::before{background:var(--sold);}#sec-today .bd.a2::before{background:var(--blue);}#sec-today .bd.a3::before{background:var(--warm);}#sec-today .bd.a4::before{background:var(--hot);}#sec-today .bd.none::before{background:var(--t3);}#sec-today .bd.dead::before{background:#A83A0C;}
+  #sec-today .bd-n{font-size:22px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;}
+  #sec-today .bd-l{font-size:11px;color:var(--t2);font-weight:600;}
+  #sec-today .bd-bar{display:flex;height:9px;border-radius:6px;overflow:hidden;background:#eef1f4;}
+  #sec-today .bd-bar i{display:block;height:100%;}
+  #sec-today .bd-bar i.a1{background:var(--sold);}#sec-today .bd-bar i.a2{background:var(--blue);}#sec-today .bd-bar i.a3{background:var(--warm);}#sec-today .bd-bar i.a4{background:var(--hot);}#sec-today .bd-bar i.none{background:var(--t3);}#sec-today .bd-bar i.dead{background:#A83A0C;}
+  #sec-today .filterbar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;background:linear-gradient(180deg,#fff,#fafbfc);border:1px solid var(--line);border-radius:14px;padding:15px 17px;margin-bottom:16px;box-shadow:0 1px 3px rgba(20,30,50,.04);}
+  #sec-today .filterbar .fgrp{display:flex;flex-direction:column;gap:5px;}
+  #sec-today .filterbar .fgrp.grow{flex:1;min-width:180px;}
+  #sec-today .filterbar label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);}
+  #sec-today .filterbar input,#sec-today .filterbar select{border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:13px;color:var(--t1);background:#fff;font-family:inherit;min-width:140px;height:38px;}
+  #sec-today .filterbar input:focus,#sec-today .filterbar select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(22,144,212,.12);}
+  #sec-today .filterbar .fclear{border:1px solid var(--line);background:#fafbfc;border-radius:8px;padding:9px 15px;font-size:12.5px;font-weight:600;color:var(--t2);cursor:pointer;height:38px;}
+  #sec-today .tablewrap{background:#fff;border:1px solid var(--line);border-radius:12px;overflow-x:auto;margin-bottom:20px;}
+  #sec-today table{width:100%;border-collapse:collapse;font-size:13px;min-width:1180px;}
+  #sec-today thead th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);text-align:left;padding:11px 12px;background:#fafbfc;border-bottom:1px solid var(--line);white-space:nowrap;}
+  #sec-today thead th.r,#sec-today tbody td.r{text-align:right;}
+  #sec-today thead th.c,#sec-today tbody td.c{text-align:center;}
+  #sec-today tbody td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap;}
+  #sec-today tbody tr:last-child td{border-bottom:none;}
+  #sec-today tbody tr:hover{background:#f7f9fb;}
+  #sec-today tbody tr.hot{background:var(--hot-bg);}
+  #sec-today .dot{display:inline-block;width:9px;height:9px;border-radius:50%;}
+  #sec-today .dot.cool{background:var(--cool);}#sec-today .dot.warm{background:var(--warm);}#sec-today .dot.hot{background:var(--hot);}#sec-today .dot.sold{background:var(--sold);}
+  #sec-today .cust{font-weight:700;} #sec-today .job{color:var(--t2);font-size:12px;}
+  #sec-today .refno{font-size:11px;font-weight:700;color:var(--blue-d);font-variant-numeric:tabular-nums;}
+  #sec-today .loc{font-size:12px;color:var(--t1);}
+  #sec-today .email{font-size:11px;color:var(--t2);}
+  #sec-today .mins{font-weight:800;font-variant-numeric:tabular-nums;}
+  #sec-today tr.hot .mins{color:var(--hot);}#sec-today tr.warm .mins{color:var(--warm);}#sec-today tr.cool .mins{color:var(--cool);}
+  #sec-today .buyers{font-weight:800;color:var(--sold);}
+  #sec-today .rev{font-weight:700;} #sec-today .worthlost{font-weight:700;color:var(--warm);}
+  #sec-today .rung{display:inline-flex;gap:3px;}
+  #sec-today .rung i{width:10px;height:6px;border-radius:3px;background:#e0e3e7;display:inline-block;}
+  #sec-today .rung i.on{background:var(--blue);}#sec-today .rung i.on.hot{background:var(--hot);}
+  #sec-today .rung.sold i.ons{background:var(--sold);}
+  #sec-today .soldon{font-size:11px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+  #sec-today .soldon.a1{background:var(--sold-bg);color:#0A5747;}#sec-today .soldon.a2{background:#DCEAF7;color:var(--blue-d);}#sec-today .soldon.a3{background:var(--warm-bg);color:var(--warm);}#sec-today .soldon.a4{background:var(--hot-bg);color:var(--hot);}
+  #sec-today .soldon.chasing{background:#eef1f4;color:var(--t2);}#sec-today .soldon.dead{background:var(--hot-bg);color:var(--hot);}
+  #sec-today .stagebar{display:inline-flex;gap:3px;}
+  #sec-today .stagebar i{width:12px;height:6px;border-radius:3px;background:#e0e3e7;display:inline-block;}
+  #sec-today .stagebar i.on.s1{background:var(--warm);}#sec-today .stagebar i.on.s2{background:var(--blue);}#sec-today .stagebar i.on.s3{background:var(--sold);}
+  #sec-today .stagewrap{position:relative;display:inline-flex;flex-direction:column;align-items:center;gap:3px;cursor:default;}
+  #sec-today .stagelabel{font-size:11px;font-weight:700;}
+  #sec-today .stagelabel.won{color:var(--sold);}#sec-today .stagelabel.quoted{color:var(--blue-d);}#sec-today .stagelabel.unlocked{color:var(--warm);}
+  #sec-today .stagepop{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 28px rgba(20,30,50,.16);padding:11px 13px;min-width:230px;z-index:30;opacity:0;pointer-events:none;transition:.14s;white-space:normal;}
+  #sec-today .stagewrap:hover .stagepop{opacity:1;pointer-events:auto;}
+  #sec-today .stagepop .pophead{font-size:11px;font-weight:700;color:var(--t2);padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--line);}
+  #sec-today .stagepop .pophead b{color:var(--hot);}
+  #sec-today .pshop{display:flex;justify-content:space-between;gap:12px;padding:4px 0;font-size:12px;}
+  #sec-today .pshop .pname{color:var(--t1);font-weight:600;}
+  #sec-today .pw{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;white-space:nowrap;}
+  #sec-today .pw.won{background:var(--sold-bg);color:#0A5747;}#sec-today .pw.quoted{background:#DCEAF7;color:var(--blue-d);}#sec-today .pw.unlocked{background:var(--warm-bg);color:var(--warm);}
+  #sec-today .why{font-size:11px;color:var(--t2);}
+  #sec-today .disc{font-size:10px;font-weight:700;color:var(--warm);background:var(--warm-bg);border-radius:4px;padding:1px 5px;margin-left:4px;}
+  #sec-today .status{font-size:11px;font-weight:700;color:var(--sold);}
+  #sec-today button.go{border:none;border-radius:7px;padding:7px 12px;font-size:11.5px;font-weight:700;cursor:pointer;color:#fff;background:var(--t2);white-space:nowrap;}
+  #sec-today button.go.hot{background:var(--hot);}#sec-today button.go.warm{background:var(--warm);}#sec-today button.go.cool{background:var(--blue);}
+  #sec-today button.go.retire{background:#fff;border:1px solid var(--line);color:var(--t3);}
+  #sec-today .sectionhead{display:flex;align-items:center;gap:10px;margin:6px 2px 12px;}
+  #sec-today .sectionhead h2{font-size:13px;font-weight:700;margin:0;}
+  #sec-today .sectionhead .tag{font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;background:var(--sold-bg);color:#0A5747;}
+  #sec-today .sectionhead .spacer{flex:1;height:1px;background:var(--line);}
+  #sec-today .foot{font-size:11.5px;color:var(--t3);margin-top:4px;line-height:1.55;} #sec-today .foot b{color:var(--t2);}
+  #sec-today .cust-click{cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+  #sec-today .cust-click:hover{color:var(--blue);}
+  #sec-today .expand-ic{font-size:9px;color:var(--t3);transition:transform .15s;}
+  #sec-today .cust-click.open .expand-ic{transform:rotate(180deg);color:var(--blue);}
+  #sec-today .cust-click.open{color:var(--blue);}
+  #sec-today tr.detailrow td{background:#f7f9fb;padding:0;border-bottom:1px solid var(--line);}
+  #sec-today .detailcard{padding:18px 22px;max-width:900px;}
+  #sec-today .detailcols{display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap;}
+  #sec-today .detailcol{flex:1 1 340px;min-width:280px;max-width:440px;min-width:0;}
+  #sec-today .detailcol.stores{flex:1 1 380px;max-width:480px;}
+  #sec-today .detailcard .dv{overflow-wrap:anywhere;}
+  #sec-today .commentsfull{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);}
+  #sec-today .commentsfull .dk{display:block;font-weight:700;color:var(--t3);font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;}
+  #sec-today .commentsfull .dv{display:block;font-size:13px;color:var(--t2);line-height:1.55;overflow-wrap:anywhere;}
+  #sec-today .storesblock{}
+  #sec-today .storeshead{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--t3);margin-bottom:8px;}
+  #sec-today .storerow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 0;border-bottom:1px solid #eceef1;font-size:13px;}
+  #sec-today .storerow:last-child{border-bottom:none;}
+  #sec-today .sname{font-weight:600;color:var(--t1);}
+  #sec-today .sw{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;white-space:nowrap;}
+  #sec-today .sw.won{background:var(--sold-bg);color:#0A5747;}
+  #sec-today .sw.quoted{background:#DCEAF7;color:var(--blue-d);}
+  #sec-today .sw.unlocked{background:var(--warm-bg);color:var(--warm);}
+  #sec-today .sw.sent{background:#eef1f4;color:var(--t3);}
+  #sec-today .sright{display:inline-flex;align-items:center;gap:10px;}
+  #sec-today .spaid{font-size:11px;color:var(--t2);font-weight:600;font-variant-numeric:tabular-nums;}
+  #sec-today .ptag{font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:4px;margin-left:4px;text-transform:uppercase;letter-spacing:.03em;}
+  #sec-today .ptag.full{background:var(--sold-bg);color:#0A5747;}
+  #sec-today .ptag.disc{background:var(--warm-bg);color:var(--warm);}
+  #sec-today .detailcard .drow{display:flex;gap:14px;padding:7px 0;border-bottom:1px solid #eceef1;font-size:13px;}
+  #sec-today .detailcard .drow:last-child{border-bottom:none;}
+  #sec-today .detailcard .dk{flex:none;width:92px;font-weight:700;color:var(--t3);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding-top:2px;}
+  #sec-today .detailcard .dv{color:var(--t1);line-height:1.5;}
+  #sec-today .detailcard .comments .dv{color:var(--t2);}
+/* ===== Readability boost: bigger, bolder, darker small text everywhere ===== */
+body{font-size:15px !important;}
+.k,.u,.hint,.csub,.tsub,.why,.job,.bd-l,.bd-title,.fk,.fu,.dk,.storeshead,
+th,.foot,.note,label,.pophead,.lbl h2,.sectionband p.note{
+  font-size:13px !important; color:#374151 !important; font-weight:600 !important;
+}
+table td,table th{font-size:14px !important;}
+.tname,.cust,.pt-name,.job{color:#111827 !important;}
+.v,.bd-n,.fv,.pt-now{font-weight:800 !important;}
+h1,h2,.logo{color:#111827 !important;}
+.pill,.tag,.dot,.creditpill,.soldon,.pw,.ptag,.disc{font-weight:800 !important;}
+</style>
+</head>
+<body>
+  <div class="pagehead">
+    <div class="brandrow"><span class="logo"><span class="a">AUTO</span><span class="h">HERO</span></span><h1>Command Centre</h1><span style="margin-left:auto;font-size:11px;color:var(--t3);font-weight:600;">build v27 · 3 membership tiers in Forecast + Pricing</span></div>
+    <div class="tabs">
+      <button class="tab on" id="tab-forecast" onclick="showTab('forecast')">Forecast <span class="tsub">plan &amp; model</span></button>
+      <button class="tab" id="tab-today" onclick="showTab('today')">Today <span class="tsub">live leads &amp; retarget</span></button>
+      <button class="tab" id="tab-pricing" onclick="showTab('pricing')">Pricing <span class="tsub">credits &amp; rates</span></button>
+      <button class="tab" id="tab-customer" onclick="showTab('customer')">Customer Facing Flow <span class="tsub">member portal</span></button>
+    </div>
+  </div>
+
+  <div class="tabpanel on" id="panel-forecast">
+    <div class="sectionband"><div class="lbl"><h2>Forecast</h2><span class="pill fc">Plan &amp; model</span><span class="ln"></span></div><p class="note">What could happen — set your assumptions and see the revenue that falls out.</p></div>
+    <div id="sec-forecast">
+<div class="wrap">
+  <div class="masthead"><span class="logo"><span class="a">AUTO</span><span class="h">HERO</span></span><h1>Revenue by Lead Type</h1></div>
+  <p class="sub">Each credit tier is its own product — different price, different demand. This models revenue per tier and sums them, so the high-value jobs show their real weight instead of being averaged away.</p>
+
+  <p class="src"><b>Seeded from your data:</b> 109 recent requests classified against the credit table — 19% one-credit, 7% two-credit, 3% three-credit, 71% four-credit, 0% fleet. Adjust anything below; these are the starting point, not the last word.</p>
+
+  <div class="card" id="simplecard" style="border:2px solid var(--blue);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+      <h2 style="margin:0;">Sold-rate mode</h2>
+      <label class="switch"><input type="checkbox" id="simple-toggle"><span class="track"></span></label>
+    </div>
+    <p class="csub" id="simple-sub">Off — revenue is driven by the detailed per-tier unlock rates below. Flip on to drive it by one simple number: how many of your leads get bought.</p>
+    <div id="simple-body" style="display:none;">
+      <div class="ctrl" style="margin-top:8px;">
+        <div class="top"><label>Avg buyers per lead</label><span class="val" id="v-buyers">1.0</span></div>
+        <input type="range" id="buyers" min="0" max="5" step="0.1" value="1.0">
+        <p class="hint">How many shops buy each lead, on average. 1.0 = each lead sells once; 2.0 = each lead sells to two shops. Drag to see more-sold vs less-sold.</p>
+      </div>
+      <div class="soldbar">
+        <div class="soldbar-fill" id="soldbar-fill"></div>
+        <div class="soldbar-mark" id="soldbar-mark"></div>
+      </div>
+      <p class="soldnote" id="soldnote"></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Batch &amp; pricing</h2>
+    <div class="globals">
+      <div class="ctrl">
+        <div class="top"><label>Leads sent</label><span class="val" id="v-leads">101</span></div>
+        <input type="range" id="leads" min="10" max="2000" step="1" value="101">
+        <p class="hint">The batch size — the primary lever. The mix below splits these leads across job types.</p>
+      </div>
+      <div class="ctrl">
+        <div class="top"><label>Shops per lead</label><span class="val" id="v-shops">6</span></div>
+        <input type="range" id="shops" min="1" max="50" step="1" value="6">
+        <p class="hint">Avg nearby matching shops per lead.</p>
+      </div>
+      <div class="ctrl">
+        <div class="top"><label>Total sends</label><span class="val" id="v-sends">600</span></div>
+        <input type="range" id="sends" min="10" max="20000" step="10" value="600">
+        <p class="hint">Leads × shops. Drag this to model reach directly — shops per lead adjusts to match.</p>
+      </div>
+      <div class="ctrl">
+        <div class="top"><label>Max quotes per lead</label><span class="val" id="v-cap">5</span></div>
+        <input type="range" id="cap" min="1" max="10" step="1" value="5">
+        <p class="hint">Ceiling on how many shops can quote one lead, however many receive it — protects the customer from too many calls and caps per-lead revenue.</p>
+      </div>
+      <div class="ctrl">
+        <div class="top"><label>Credit rate</label><span class="val" id="v-rate">$2.48</span></div>
+        <input type="range" id="rate" min="1.50" max="4.00" step="0.02" value="2.48">
+        <p class="hint">Dollar value of one credit. Reprices every tier together. Or jump to a real membership rate below.</p>
+      </div>
+    </div>
+
+    <div class="tierrow">
+      <div class="tierlabel">Model at a real membership rate</div>
+      <div class="tierpills">
+        <button class="tierpill" data-rate="3.80"><span class="tp-name">Pay As You Go</span><span class="tp-sub">20 credits, one-off</span><span class="tp-rate">$3.80/cr</span></button>
+        <button class="tierpill" data-rate="3.36"><span class="tp-name">Standard Membership</span><span class="tp-sub">22 credits / month</span><span class="tp-rate">$3.36/cr</span></button>
+        <button class="tierpill" data-rate="2.94"><span class="tp-name">Pro Membership</span><span class="tp-sub">50 credits / month</span><span class="tp-rate">$2.94/cr</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border:2px solid var(--warm);">
+    <h2>Retarget &amp; discount</h2>
+    <p class="csub">Some leads sell nobody on the first send. This models what happens to them next — the same retarget ladder from the Today tab, folded into the forecast.</p>
+    <div class="globals">
+      <div class="ctrl">
+        <div class="top"><label>Retarget recovery rate</label><span class="val" id="v-recovery">40%</span></div>
+        <input type="range" id="recovery" min="0" max="100" step="1" value="40">
+        <p class="hint">Of leads that get zero buyers on the first send, what % get rescued via the retarget ladder (nudge → widen → discount)?</p>
+      </div>
+      <div class="ctrl">
+        <div class="top"><label>Avg retarget discount</label><span class="val" id="v-discount">25%</span></div>
+        <input type="range" id="discount" min="0" max="60" step="1" value="25">
+        <p class="hint">Recovered leads mostly sell at a reduced credit price — this is the average cut across attempts 3–4 on the ladder.</p>
+      </div>
+    </div>
+
+    <div class="pricetag-row">
+      <div class="pricetag-label">What a recovered sale looks like</div>
+      <div class="pricetag">
+        <span class="pt-name" id="pt-name">4 new tyres</span>
+        <span class="pt-was" id="pt-was">$9.92</span>
+        <span class="pt-arrow">→</span>
+        <span class="pt-now" id="pt-now">$7.44</span>
+        <span class="pt-badge" id="pt-badge">25% off</span>
+      </div>
+    </div>
+
+    <div class="splitrow">
+      <div class="splitlabel">Revenue mix this batch</div>
+      <div class="splitbar">
+        <div class="splitbar-fresh" id="split-fresh"></div>
+        <div class="splitbar-rec" id="split-rec"></div>
+      </div>
+      <div class="splitkey">
+        <span><i class="dot-fresh"></i>Fresh, full price — <b id="split-fresh-amt">$0</b></span>
+        <span><i class="dot-rec"></i>Recovered, discounted — <b id="split-rec-amt">$0</b></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Lead types</h2>
+    <p class="csub">Each type's <b>% of mix</b> is independent — set what share of your leads is each job type. Watch the mix total: aim for ~100%. <span id="mixstatus" style="font-weight:600;"></span> <button id="balance" style="border:1px solid var(--line);background:#fff;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:600;color:var(--blue);cursor:pointer;margin-left:4px;">Balance to 100%</button></p>
+    <table class="types">
+      <thead><tr>
+        <th class="l">Lead type</th>
+        <th class="c">Credits</th>
+        <th>Fee</th>
+        <th>Lead worth</th>
+        <th>% of mix</th>
+        <th>Unlock %</th>
+        <th>Buyers/lead</th>
+        <th>Unlocks</th>
+        <th>Revenue</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+      <tfoot><tr class="totalrow">
+        <td class="l">Total</td><td></td><td></td><td></td><td id="t-share">100%</td><td></td><td></td>
+        <td id="t-unlocks">0</td><td id="t-rev">$0</td>
+      </tr></tfoot>
+    </table>
+  </div>
+
+  <div class="funnel" id="funnel">
+    <div class="fstep"><div class="fk">Leads sent</div><div class="fv" id="f-leads">100</div><div class="fu">customer jobs</div></div>
+    <div class="farrow"><span class="fx">→</span></div>
+    <div class="fstep"><div class="fk">Total sends</div><div class="fv" id="f-sends">2,000</div><div class="fu">lead × shops</div></div>
+    <div class="farrow"><span class="fx">→</span><span class="fpct" id="cv-interested">10%</span></div>
+    <div class="fstep"><div class="fk">Interested</div><div class="fv" id="f-interested">0</div><div class="fu">would unlock</div></div>
+    <div class="farrow"><span class="fx">→</span><span class="fpct" id="cv-cap">98%</span></div>
+    <div class="fstep hot"><div class="fk">Purchases</div><div class="fv" id="f-buys">0</div><div class="fu" id="f-buys-u">after quote cap</div></div>
+    <div class="farrow"><span class="fx">→</span></div>
+    <div class="fstep warm"><div class="fk">Recovered</div><div class="fv" id="f-recovered">0</div><div class="fu">via retarget, discounted</div></div>
+    <div class="farrow"><span class="fx">→</span></div>
+    <div class="fstep hot"><div class="fk">Revenue</div><div class="fv" id="f-rev">$0</div><div class="fu" id="f-rev-u">this batch</div></div>
+  </div>
+  <p class="convline" id="convline"></p>
+
+  <div class="band">
+    <div class="b"><span class="k">Batch revenue</span><span class="v blue" id="r-total">$0</span><span class="u" id="r-per">per batch</span></div>
+    <div class="b"><span class="k">Per lead sent</span><span class="v sm" id="r-perlead">$0</span><span class="u">avg across all types</span></div>
+    <div class="b"><span class="k">Avg fee / unlock</span><span class="v sm" id="r-fee">$0</span><span class="u">blended</span></div>
+    <div class="b"><span class="k">Times a lead was bought</span><span class="v sm" id="r-unlocks">0</span><span class="u">total paid unlocks</span></div>
+  </div>
+  <p class="summary" id="summary"></p>
+  <p class="note" id="note"></p>
+
+  
+
+  <p class="foot"><b>How it reads:</b> the blue bars show each tier's revenue contribution — watch the 4-credit row dominate, because it's 71% of volume <i>and</i> the higher fee. Drop a tier's unlock % to model pricier jobs converting less. Raising the credit rate lifts every fee but should, in reality, lower unlock % (model that by hand for now). <b>Unlock rates are still assumptions</b> — the one thing a live test would pin down.</p>
+</div>
+
+
+</div>
+  </div>
+
+  <div class="tabpanel" id="panel-today">
+    <div class="sectionband"><div class="lbl"><h2>Today</h2><span class="pill td">Live leads &amp; retarget</span><span class="ln"></span></div><p class="note">What is happening — the leads that sold, quoted, or are being chased.</p></div>
+    <div id="sec-today">
+      <div class="wrap">
+        <div class="kpis">
+          <div class="kpi"><div class="k">Leads today</div><div class="v" id="k-total">0</div><div class="u">received</div></div>
+          <div class="kpi"><div class="k">Stores contacted</div><div class="v" id="k-stores">0</div><div class="u" id="k-avgstores">0 avg per lead</div></div>
+          <div class="kpi"><div class="k">Sold</div><div class="v green" id="k-sold">0</div><div class="u" id="k-soldpct">0%</div></div>
+          <div class="kpi"><div class="k">In retarget</div><div class="v red" id="k-retarget">0</div><div class="u">being chased</div></div>
+          <div class="kpi dark"><div class="k">Revenue booked</div><div class="v" id="k-rev">$0</div><div class="u" id="k-unlocks">0 unlocks</div></div>
+          <div class="kpi"><div class="k">At risk</div><div class="v red" id="k-risk">$0</div><div class="u">lead value if they die</div></div>
+        </div>
+        <p class="convsummary" id="conv-summary"></p>
+
+        <div class="breakdown">
+          <div class="bd-title">How leads closed</div>
+          <div class="bd-cells">
+            <div class="bd a1"><span class="bd-n" id="bd-1">0</span><span class="bd-l">1st send</span></div>
+            <div class="bd a2"><span class="bd-n" id="bd-2">0</span><span class="bd-l">2nd</span></div>
+            <div class="bd a3"><span class="bd-n" id="bd-3">0</span><span class="bd-l">3rd</span></div>
+            <div class="bd a4"><span class="bd-n" id="bd-4">0</span><span class="bd-l">4th</span></div>
+            <div class="bd none"><span class="bd-n" id="bd-un">0</span><span class="bd-l">Still chasing</span></div>
+            <div class="bd dead"><span class="bd-n" id="bd-dead">0</span><span class="bd-l">Retiring</span></div>
+          </div>
+          <div class="bd-bar" id="bd-bar"></div>
+        </div>
+
+        <div class="filterbar">
+          <div class="fgrp grow"><label>Search</label><input type="text" id="flt-q" placeholder="Customer, job, ref, location or email…"></div>
+          <div class="fgrp"><label>Status</label><select id="flt-status"><option value="all">All statuses</option><option value="won">Won</option><option value="quoted">Quoted / replied</option><option value="unlocked">Unlocked, no reply</option><option value="sold">Sold (any)</option><option value="unsold">Chasing / unsold</option></select></div>
+          <div class="fgrp"><label>Job type</label><select id="flt-type"><option value="all">All types</option></select></div>
+          <div class="fgrp"><label>From date</label><input type="date" id="flt-start"></div>
+          <div class="fgrp"><label>To date</label><input type="date" id="flt-end"></div>
+          <button class="fclear" id="flt-clear">Clear</button>
+        </div>
+
+        <div class="sectionhead"><h2>All leads</h2><span class="tag" id="all-count">0 leads</span><span style="font-size:11px;color:var(--t3);margin-left:6px;">newest first</span><div class="spacer"></div></div>
+        <div class="tablewrap">
+          <table>
+            <thead><tr>
+              <th class="c"></th><th>Customer / job</th><th>Location</th><th class="r">Dist</th>
+              <th class="r">Fee</th><th class="c">Status</th><th class="r">Time</th><th class="c">Bought / reached</th>
+              <th class="c">Opened</th><th class="c">Attempt</th><th class="c">Sold on</th><th>Detail</th><th class="r">Value</th><th class="r">Action</th>
+            </tr></thead>
+            <tbody id="all-body"></tbody>
+          </table>
+        </div>
+        <p class="foot"><b>One list, newest first.</b> Every lead with its customer details, current status, and how it closed. Green = sold; the stage bar (hover it) shows which shops unlocked, quoted, or won. Amber/red = still being chased up the retarget ladder. Fire a retarget and a recovered lead flips to sold in place.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="panel-pricing">
+    <div class="sectionband"><div class="lbl"><h2>Pricing</h2><span class="pill pr">Credits &amp; rates</span><span class="ln"></span></div><p class="note">What each lead type costs a shop to unlock — the credit price behind every fee in Forecast and Today.</p></div>
+    <div id="sec-pricing">
+      <div class="wrap">
+        <div class="pricecard">
+          <div class="ratebar">
+            <label for="pr-rate">Custom modelling rate ($ per credit)</label>
+            <input type="number" id="pr-rate" value="2.48" min="0" step="0.01">
+            <span class="hint">Drives the "Custom rate" column — and the Forecast tab uses this same rate for its slider.</span>
+            <button class="pr-addbtn" id="pr-toggle-add" style="margin-left:auto;">+ Add service / lead type</button>
+          </div>
+
+          <div class="tierrow">
+            <div class="tierlabel">Real membership rates</div>
+            <div class="tierpills">
+              <button class="tierpill" data-rate="3.80"><span class="tp-name">Pay As You Go</span><span class="tp-sub">20 credits, one-off</span><span class="tp-rate">$3.80/cr</span></button>
+              <button class="tierpill" data-rate="3.36"><span class="tp-name">Standard Membership</span><span class="tp-sub">22 credits / month</span><span class="tp-rate">$3.36/cr</span></button>
+              <button class="tierpill" data-rate="2.94"><span class="tp-name">Pro Membership</span><span class="tp-sub">50 credits / month</span><span class="tp-rate">$2.94/cr</span></button>
+            </div>
+            <p class="hint" style="margin-top:8px;">Click a tier to set the custom modelling rate to it — or just compare all three directly in the table below, which always shows every tier's cost regardless of what's selected.</p>
+          </div>
+
+          <div class="addform" id="pr-addform" style="display:none;">
+            <div class="afgrp"><label>Name</label><input type="text" id="pr-new-name" placeholder="e.g. Diagnostic scan"></div>
+            <div class="afgrp"><label>Category</label><select id="pr-new-cat"></select></div>
+            <div class="afgrp" id="pr-new-cat-other-wrap" style="display:none;"><label>New category name</label><input type="text" id="pr-new-cat-other" placeholder="e.g. Diagnostics"></div>
+            <div class="afgrp narrow"><label>Credits</label><input type="number" id="pr-new-credits" value="1" min="0" step="1"></div>
+            <div class="afgrp narrow"><label>Share %</label><input type="number" id="pr-new-share" value="0" min="0" max="100" step="1"></div>
+            <div class="afgrp narrow"><label>Unlock %</label><input type="number" id="pr-new-unlock" value="10" min="0" max="100" step="1"></div>
+            <div class="afgrp narrow"><label>Worth low $</label><input type="number" id="pr-new-wlo" value="" min="0" step="1"></div>
+            <div class="afgrp narrow"><label>Worth high $</label><input type="number" id="pr-new-whi" value="" min="0" step="1"></div>
+            <div class="afgrp" style="align-self:flex-end;"><button class="pr-save" id="pr-new-save">Add lead type</button></div>
+          </div>
+
+          <div class="tablewrap">
+            <table class="pricetable">
+              <thead><tr><th>Service / lead type</th><th class="c">Credits</th><th class="r">PAYG<br><span class="th-sub">$3.80/cr</span></th><th class="r">Standard<br><span class="th-sub">$3.36/cr</span></th><th class="r">Pro<br><span class="th-sub">$2.94/cr</span></th><th class="r">Custom rate</th><th class="c">Active</th><th class="c">Remove</th></tr></thead>
+              <tbody id="pr-body"></tbody>
+            </table>
+          </div>
+          <p class="foot">Edit the member rate or any credit value and the cost column recalculates instantly. <b>Add a new service here and it appears immediately in the Forecast lead-type table and Today's job-type filter</b> — one shared list across all three tabs. Changes are in-memory for this session only; reloading the page resets to the default 22.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabpanel" id="panel-customer">
+    <div class="sectionband"><div class="lbl"><h2>Customer Facing Flow</h2><span class="pill cf">Member portal</span><span class="ln"></span></div><p class="note">The live dealer-facing journey — email alert → unlock a lead → Sale Leads dashboard → billing &amp; upsell. Hosted on GitHub Pages, embedded live below.</p></div>
+    <div id="sec-customer">
+      <div class="cf-toolbar">
+        <a href="https://banksy777-dev.github.io/auto-hero-prototype/auto-hero-full-journey-latest%20(12).html" target="_blank" rel="noopener" class="cf-openlink">Open in a new tab ↗</a>
+        <span class="cf-hint">This is the real, live prototype — not a copy. Changes pushed to GitHub Pages show up here automatically.</span>
+      </div>
+      <div class="cf-frame-wrap">
+        <iframe id="cf-iframe" src="https://banksy777-dev.github.io/auto-hero-prototype/auto-hero-full-journey-latest%20(12).html" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+<script>
+function showTab(which){
+  ['forecast','today','pricing','customer'].forEach(function(name){
+    var on = name===which;
+    var panel=document.getElementById('panel-'+name);
+    var tab=document.getElementById('tab-'+name);
+    if(panel) panel.classList.toggle('on',on);
+    if(tab) tab.classList.toggle('on',on);
+  });
+  window.scrollTo(0,0);
+}
+</script>
+
+<script>
+// ===== SHARED LEAD TYPES — single source of truth for Forecast, Today, and Pricing =====
+(function(){
+  window.LEAD_TYPES = [
+    {name:"1 tyre", category:"Tyres", credits:1, share:2, unlock:16, worthLow:10, worthHigh:20},
+    {name:"2 tyres", category:"Tyres", credits:2, share:6, unlock:14, worthLow:20, worthHigh:40},
+    {name:"3 tyres", category:"Tyres", credits:3, share:3, unlock:12, worthLow:30, worthHigh:60},
+    {name:"4 tyres", category:"Tyres", credits:4, share:24, unlock:9, worthLow:40, worthHigh:90},
+    {name:"5+ tyres", category:"Tyres", credits:5, share:2, unlock:7, worthLow:60, worthHigh:140},
+    {name:"Wheel alignments", category:"Tyres", credits:1, share:3, unlock:12, worthLow:8, worthHigh:15},
+    {name:"Wheel balancing", category:"Tyres", credits:1, share:2, unlock:13, worthLow:5, worthHigh:12},
+    {name:"Puncture repairs", category:"Tyres", credits:1, share:3, unlock:14, worthLow:3, worthHigh:8},
+    {name:"Truck tyres", category:"Tyres", credits:6, share:2, unlock:7, worthLow:100, worthHigh:400},
+    {name:"Inspections", category:"Inspections", credits:1, share:1, unlock:13, worthLow:5, worthHigh:12},
+    {name:"Roadworthy inspections", category:"Inspections", credits:1, share:3, unlock:13, worthLow:3, worthHigh:8},
+    {name:"Rego / safety inspection", category:"Inspections", credits:1, share:7, unlock:13, worthLow:3, worthHigh:6},
+    {name:"Pre-purchase inspection", category:"Inspections", credits:1, share:3, unlock:12, worthLow:6, worthHigh:14},
+    {name:"Mechanical Servicing", category:"Mechanical", credits:4, share:8, unlock:9, worthLow:20, worthHigh:55},
+    {name:"Brake repairs", category:"Mechanical", credits:4, share:6, unlock:9, worthLow:25, worthHigh:60},
+    {name:"Exhaust systems", category:"Mechanical", credits:4, share:3, unlock:8, worthLow:30, worthHigh:90},
+    {name:"Suspension", category:"Mechanical", credits:4, share:2, unlock:8, worthLow:30, worthHigh:90},
+    {name:"Steering repairs", category:"Mechanical", credits:4, share:1, unlock:8, worthLow:30, worthHigh:90},
+    {name:"Clutch and Transmission", category:"Mechanical", credits:4, share:2, unlock:8, worthLow:40, worthHigh:100},
+    {name:"Log book servicing", category:"Mechanical", credits:4, share:6, unlock:9, worthLow:20, worthHigh:55},
+    {name:"Batteries", category:"Electrical & comfort", credits:3, share:3, unlock:10, worthLow:12, worthHigh:40},
+    {name:"Air Conditioning", category:"Electrical & comfort", credits:3, share:2, unlock:10, worthLow:15, worthHigh:40},
+    {name:"Auto Electrical", category:"Electrical & comfort", credits:3, share:2, unlock:10, worthLow:15, worthHigh:45},
+    {name:"Windscreens", category:"Electrical & comfort", credits:1, share:2, unlock:10, worthLow:5, worthHigh:15},
+    {name:"Pick up and delivery", category:"Extras", credits:1, share:1, unlock:10, worthLow:5, worthHigh:15},
+    {name:"Courtesy car", category:"Extras", credits:1, share:1, unlock:10, worthLow:5, worthHigh:15},
+  ];
+  // simple pub/sub so Forecast, Today, and Pricing can rebuild when the list changes
+  window._leadTypeListeners = [];
+  window.onLeadTypesChange = function(fn){ window._leadTypeListeners.push(fn); };
+  window.notifyLeadTypesChange = function(){ window._leadTypeListeners.forEach(function(fn){ try{fn();}catch(e){console.error(e);} }); };
+  window.addLeadType = function(t){
+    window.LEAD_TYPES.push(t);
+    window.notifyLeadTypesChange();
+  };
+  window.removeLeadType = function(name){
+    window.LEAD_TYPES = window.LEAD_TYPES.filter(function(t){return t.name!==name;});
+    window.notifyLeadTypesChange();
+  };
+})();
+</script>
+
+<script>
+(function(){
+
+  const $=id=>document.getElementById(id);
+  const money=n=>'$'+n.toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0});
+  const REAL_LEADS=[
+    ['George Milic','Exhaust Systems',4],
+    ['Callum Carr','4 x New Tyres',4],
+    ['Callum Carr','Wheel Alignment',1],
+    ['Stephen Suh','Safety & Rego Inspections',1],
+    ['Vincent Henry','Exhaust Systems',4],
+    ['Olivia','4 x New Tyres',4],
+    ['Petrina O\'Brien','4 x New Tyres',4],
+    ['Sherree','Windscreens or Other Glass',1],
+    ['Charmaine','4 x New Tyres',4],
+    ['Anne Smyth','4 x New Tyres + Alignment',4],
+    ['Jett Battista','Suspension or steering',4],
+    ['Hussain','Tyre Check & Rotation',1],
+    ['Russell Lloyd','Wheel Alignment',1],
+    ['Ne','4 x New Tyres + Advice',4],
+    ['Laurence McDonald','Windscreens or Other Glass',1],
+    ['Annette Walters','Basic Service',4],
+    ['Henry','4 x New Tyres',4],
+    ['Timothy','Safety & Rego Inspections',1],
+    ['Matthew Luck','4 x Kelly Tyres',4],
+    ['Kevin','3 x Hercules Tyres',4],
+    ['Varsha','Wheel Balancing + Alignment',1],
+    ['Varsha','4 x New Tyres',4],
+    ['Sophie','Air Conditioning & Heating',3],
+    ['Chino W.','4 x Tyres + Balance + Align',4],
+    ['Andrew Prosser','Batteries & Lights',3],
+    ['Melinda','4 x New Tyres',4],
+    ['Phill Anderson','4 x 205/55R16',4],
+    ['Jamie Rothero','4 x New Tyres',4],
+    ['Chriswin George','Safety & Rego Inspections',1],
+    ['Olly Bridge','4 x 185/60R13',4],
+    ['Fraser Mccowatt','2 x 295/50R15 Cooper',2],
+    ['John Manrique','4 x 215/55R16 Yokohama',4],
+    ['Bastien','Safety & Rego Inspections',1],
+    ['Richard Mussen','1 x 245/50R14',2],
+    ['Amy','Service + Trans + Brakes',4],
+    ['Amy','4 x New Tyres',4],
+    ['Brandon','2 x 205/55R16',2],
+    ['Frank Johnson','1 x 185/70R14',2],
+    ['Mia Jarmey','Safety & Rego Inspections',1],
+    ['Mohamed Ahmed','Other Repairs & Maintenance',4],
+    ['Matthew Brady','Basic Service',4],
+    ['David Johns','4 x New Tyres',4],
+    ['Noor','Other Repairs & Maintenance',4],
+    ['Saurabh Thapa','4 x New Tyres',4],
+    ['Saurabh Thapa','Basic Service',4],
+    ['Augustine Tham','4 x 235/40R18 Federal',4],
+    ['Dean Pagotto','4 x New Tyres',4],
+    ['Harris Prasad','4 x 235/35R19',4],
+    ['Dev Menan','2 x 335/35R17',2],
+    ['Pierce Sheahan','4 x 60R18 Grenlander',4],
+    ['Joe Berta','Safety & Rego Inspections',1],
+    ['David Rivers','4 x New Tyres',4],
+    ['Nathan Carosi','Safety & Rego Inspections',1],
+    ['Rebecca Buntain','Basic Service',4],
+    ['Gary Fawcus','Transmission, Clutch & Diff',4],
+    ['nikki','4 x 255/50R16',4],
+    ['Nipuna Kularatne','4 x New Tyres',4],
+    ['Rebecca Amey','4 x Dunlop Grandtrek',4],
+    ['Simon Crick','4 x New Tyres',4],
+    ['Janice Adiard','4 x 265/50R20 Supieria',4],
+    ['Scott Ferguson','4 x Tyres + Balance + Align',4],
+    ['Scott Ferguson','Wheel Alignment + Rego',1],
+    ['Jennifer Sanchez','Basic Service',4],
+    ['Ross Hockington','Tyre Check & Rotation',1],
+    ['Michael','4 x 225/55R17 Sailun',4],
+    ['Tayla Morrissey','Basic Service',4],
+    ['Michael Sanchez','4 x New Tyres',4],
+    ['raska d.','Wheel Balancing + Alignment',1],
+    ['raska d.','Transmission, Clutch & Diff',4],
+    ['Ken brymer','Basic Service',4],
+    ['Dorothy French','Basic Service',4],
+  ];
+  const money2=n=>'$'+n.toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const fmt=n=>n.toLocaleString('en-AU',{maximumFractionDigits:0});
+
+  // [name, credits, default share %, default unlock %]
+  // [name, credits, share%, unlock%, leadWorthLow, leadWorthHigh]
+  // worth = job value x ~25% win rate; grounded in AU job-price research
+  function typesFromShared(){
+    return window.LEAD_TYPES.map(t=>[t.name, t.credits, t.share, t.unlock, t.worthLow, t.worthHigh]);
+  }
+  let TYPES = typesFromShared();
+
+  const tb=$('tbody');
+  function buildTypeRows(){
+    TYPES = typesFromShared();
+    tb.innerHTML='';
+    TYPES.forEach((t,i)=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td class="l"><span class="tname">${t[0]}</span></td>
+        <td class="c"><span class="creditpill">${t[1]}</span></td>
+        <td id="fee-${i}">$0</td>
+        <td id="worth-${i}" style="white-space:nowrap;">$${t[4]}–${t[5]}<div class="tcr" id="gap-${i}"></div></td>
+        <td><div class="sharecell"><input type="range" id="share-${i}" min="0" max="100" step="1" value="${t[2]}"><span class="sharepct" id="sp-${i}">${t[2]}%</span></div></td>
+        <td><div class="sharecell"><input type="range" id="unl-${i}" min="0" max="40" step="1" value="${t[3]}" style="width:70px;"><span class="sharepct" id="up-${i}">${t[3]}%</span></div></td>
+        <td id="buy-${i}">0</td>
+        <td id="unlk-${i}">0</td>
+        <td><div class="revbar-wrap"><div class="revbar" id="bar-${i}"></div><div class="revbar-txt" id="barT-${i}">$0</div></div></td>`;
+      tb.appendChild(tr);
+    });
+    wireTypeEvents();
+    calc();
+    if(typeof renderLeadTable==='function') renderLeadTable();
+  }
+
+  function calc(){
+    const leads=+$('leads').value, shops=+$('shops').value, rate=+$('rate').value, cap=+$('cap').value;
+    // mix percentages are independent; show their live total (aim ~100%)
+    let shares=TYPES.map((t,i)=>+$('share-'+i).value);
+    const mixTotal=shares.reduce((a,b)=>a+b,0);
+    $('v-leads').textContent=fmt(leads); $('v-shops').textContent=shops; $('v-rate').textContent=money2(rate);
+    $('v-cap').textContent=cap;
+    const sends=leads*shops;
+    // keep the Total sends slider in sync with leads×shops (without refiring)
+    if(+$('sends').value!==sends){ $('sends').value=Math.min(20000,sends); }
+    $('v-sends').textContent=fmt(sends);
+
+    // Poisson-capped expected unlocks per lead: some leads exceed the cap, most don't.
+    // E[min(X,cap)] where X~Poisson(lambda=shops*rate). This makes the cap bite smoothly.
+    function cappedMean(lambda, cap){
+      if(lambda<=0) return 0;
+      // E[min(X,cap)] = sum_{k=0..cap-1} k*P(k) + cap*P(X>=cap)
+      let pk=Math.exp(-lambda), sum=0, cdf=0;
+      for(let k=0;k<cap;k++){
+        sum += k*pk;
+        cdf += pk;
+        pk = pk*lambda/(k+1);
+      }
+      sum += cap*(1-cdf);
+      return sum;
+    }
+
+    const simpleOn = $('simple-toggle').checked;
+    const buyersSet = +$('buyers').value;
+    const recoveryRate = +$('recovery').value/100;
+    const discountPct = +$('discount').value/100;
+    $('v-recovery').textContent=$('recovery').value+'%';
+    $('v-discount').textContent=$('discount').value+'%';
+
+    let rows=[], totRev=0, totUnlk=0, maxRev=0, anyCapped=false, totInterested=0, totRecovered=0, totRecRev=0;
+    TYPES.forEach((t,i)=>{
+      const typeLeads=leads*(shares[i]/100);        // % of the master leads total
+      const sharePct= shares[i]/100;
+      const unl=+$('unl-'+i).value/100;
+      const fee=t[1]*rate;
+      const lambda=shops*unl;                       // avg interested shops per lead
+      // perLead: in sold-rate mode, use the single slider; else the detailed capped model
+      const perLead = simpleOn ? Math.min(buyersSet, cap) : cappedMean(lambda, cap);
+      const lossPct=lambda>0 ? (lambda-perLead)/lambda : 0;
+      if(!simpleOn && lossPct>0.02) anyCapped=true;              // cap is trimming >2%
+      totInterested += typeLeads*(simpleOn?buyersSet:lambda);   // pre-cap interested sends
+      const unlocks=typeLeads*perLead;
+      const rev=unlocks*fee;
+      // leads with zero buyers on the fresh send -> candidates for retarget recovery
+      const pZero = simpleOn ? Math.max(0,1-buyersSet) : Math.exp(-Math.max(lambda,0));
+      const zeroLeads = typeLeads*pZero;
+      const recoveredLeads = zeroLeads*recoveryRate;
+      const recoveredFee = fee*(1-discountPct);
+      const recoveredRev = recoveredLeads*recoveredFee;
+      totRecovered += recoveredLeads; totRecRev += recoveredRev;
+      rows.push({fee,unlocks,rev,sharePct,perLead,lambda,zeroLeads,recoveredLeads,recoveredRev});
+      totRev+=rev; totUnlk+=unlocks; if(rev>maxRev)maxRev=rev;
+      $('fee-'+i).textContent=money2(fee);
+      // fee as % of mid lead-worth; flag underpricing
+      const worthMid=(t[4]+t[5])/2;
+      const feePctOfWorth=worthMid>0 ? fee/worthMid : 0;
+      const gap=$('gap-'+i);
+      if(gap){
+        if(feePctOfWorth<0.25){ gap.textContent='fee is '+Math.round(feePctOfWorth*100)+'% of worth'; gap.style.color='#A83A0C'; }
+        else if(feePctOfWorth<0.5){ gap.textContent='fee is '+Math.round(feePctOfWorth*100)+'% of worth'; gap.style.color='#8F5608'; }
+        else { gap.textContent='fee is '+Math.round(feePctOfWorth*100)+'% of worth'; gap.style.color='#0B6B54'; }
+      }
+      $('sp-'+i).textContent=shares[i]+'%';
+      $('up-'+i).textContent=(+$('unl-'+i).value)+'%';
+      $('unlk-'+i).textContent=fmt(Math.round(unlocks));
+      const bs=$('buy-'+i); if(bs) bs.textContent=perLead.toFixed(2);
+    });
+    // bars scaled to max
+    rows.forEach((r,i)=>{
+      const w=maxRev? r.rev/maxRev*100 : 0;
+      $('bar-'+i).style.width=w+'%';
+      const bt=$('barT-'+i); bt.textContent=money(r.rev);
+      bt.className='revbar-txt'+(w<45?' dark':'');
+    });
+
+    $('t-share').textContent=mixTotal+'%';
+    const ms=$('mixstatus');
+    if(Math.abs(mixTotal-100)<0.5){ ms.textContent='Mix = 100% ✓'; ms.style.color='#0B6B54'; }
+    else if(mixTotal>100){ ms.textContent='Mix = '+mixTotal+'% (over — leads will exceed the batch)'; ms.style.color='#A83A0C'; }
+    else { ms.textContent='Mix = '+mixTotal+'% (under — some leads unallocated)'; ms.style.color='#8F5608'; }
+    $('t-unlocks').textContent=fmt(Math.round(totUnlk));
+    $('t-rev').textContent=money(totRev);
+
+    const grandRev = totRev + totRecRev;
+    const grandUnlocks = totUnlk + totRecovered;
+    $('r-total').textContent=money(grandRev);
+    $('r-perlead').textContent=money2(grandRev/leads);
+    $('r-fee').textContent= grandUnlocks? money2(grandRev/grandUnlocks):'$0';
+    $('r-unlocks').textContent=fmt(Math.round(grandUnlocks));
+
+    // funnel
+    $('f-leads').textContent=fmt(leads);
+    $('f-sends').textContent=fmt(sends);
+    $('f-interested').textContent=fmt(Math.round(totInterested));
+    $('f-buys').textContent=fmt(Math.round(totUnlk));
+    const trimmed=Math.round(totInterested-totUnlk);
+    $('f-buys-u').textContent = trimmed>0 ? `${fmt(trimmed)} trimmed by cap` : 'after quote cap';
+    $('f-recovered').textContent=fmt(Math.round(totRecovered));
+    $('f-rev').textContent=money(grandRev);
+    $('f-rev-u').textContent = totRecRev>0 ? `incl. ${money(totRecRev)} recovered` : 'this batch';
+
+    // price tag: show the discount applied to the biggest-revenue lead type
+    let repIdx=0, repMax=-1;
+    rows.forEach((r,i)=>{ if(r.rev>repMax){ repMax=r.rev; repIdx=i; } });
+    const repType = TYPES[repIdx];
+    if(repType){
+      const wasFee = repType[1]*rate;
+      const nowFee = wasFee*(1-discountPct);
+      $('pt-name').textContent = repType[0];
+      $('pt-was').textContent = money2(wasFee);
+      $('pt-now').textContent = money2(nowFee);
+      $('pt-badge').textContent = $('discount').value+'% off';
+    }
+
+    // revenue split bar: fresh vs recovered
+    const splitTot = grandRev || 1;
+    const freshPct = Math.max(0, Math.min(100, totRev/splitTot*100));
+    const recPct = Math.max(0, Math.min(100, totRecRev/splitTot*100));
+    $('split-fresh').style.width = freshPct+'%';
+    $('split-rec').style.width = recPct+'%';
+    $('split-fresh-amt').textContent = money(totRev);
+    $('split-rec-amt').textContent = money(totRecRev);
+
+    // conversion rates
+    const cvInterested = sends>0 ? totInterested/sends : 0;      // send -> interested
+    const cvCap = totInterested>0 ? totUnlk/totInterested : 0;   // interested -> bought (after cap)
+    const cvOverall = sends>0 ? totUnlk/sends : 0;               // send -> purchase
+    $('cv-interested').textContent = Math.round(cvInterested*100)+'%';
+    $('cv-cap').textContent = Math.round(cvCap*100)+'%';
+    $('convline').innerHTML =
+      `Overall conversion: <b>${(cvOverall*100).toFixed(1)}%</b> of the ${fmt(sends)} shop-views became a paid unlock `+
+      `(${fmt(Math.round(totUnlk))} purchases). Each lead is bought <b>${(totUnlk/leads).toFixed(2)}×</b> on average, `+
+      `at <b>${money2(totRev/ (totUnlk||1))}</b> per purchase.`;
+
+    // plain-language summary
+    const buyersPerLead = totUnlk/leads;                     // avg shops that bought each lead
+    // chance a given lead sells at least once = 1 - P(no buyer), using blended lambda after cap
+    let noBuy=0;
+    rows.forEach((r,i)=>{ noBuy += r.sharePct*Math.exp(-r.lambda); });
+    const leadsSold = leads*(1-noBuy);
+    $('summary').innerHTML =
+      `Across <b>${fmt(leads)} leads</b> sent to <b>${shops} shops each</b>, shops bought a lead <b>${fmt(Math.round(totUnlk))} times</b> fresh, plus <b>${fmt(Math.round(totRecovered))} more</b> recovered later via retarget at a discount — `+
+      `that's about <b>${buyersPerLead.toFixed(1)} paying shops per lead</b> on average from the fresh send alone. `+
+      `Roughly <b>${fmt(Math.round(leadsSold))} of the ${fmt(leads)} leads</b> (${Math.round((leadsSold/leads)*100)}%) sold to at least one shop on the fresh send; the rest either got rescued via retarget or never sold.`;
+
+    const n=$('note');
+    let bigRev=0; TYPES.forEach((t,idx)=>{ if(t[1]===4) bigRev+=rows[idx].rev; });
+    const bigShare=bigRev/(grandRev||1);
+    if(totRecRev>grandRev*0.15){n.className='note warn';n.innerHTML=`<b>${money(totRecRev)}</b> of this batch's revenue (${Math.round(totRecRev/grandRev*100)}%) comes from discounted retarget recoveries, not fresh sales — a meaningful chunk of income depends on rescuing cold leads, not just the first send.`;}
+    else if(anyCapped){n.className='note warn';n.innerHTML=`The <b>${cap}-quote cap is trimming revenue</b> — some leads attract more interested shops than the cap allows, so those extra unlocks are turned away to protect the customer from too many calls. Raise the cap to capture them, lower it to protect experience.`;}
+    else if(bigShare>0.6){n.className='note ok';n.innerHTML=`The 4-credit tier drives <b>${Math.round(bigShare*100)}%</b> of revenue — your economics live or die on those service &amp; 4-tyre jobs. The quote cap is barely binding here.`;}
+    else{n.className='note ok';n.textContent='Revenue is spread across tiers; the quote cap is barely binding at these settings.';}
+  }
+
+  ['leads','shops','rate','cap','recovery','discount'].forEach(id=>$(id).addEventListener('input',()=>{calc();renderLeadTable();}));
+  // balance mix to 100% proportionally
+  $('balance').addEventListener('click',()=>{
+    let vals=TYPES.map((t,i)=>+$('share-'+i).value);
+    let sum=vals.reduce((a,b)=>a+b,0);
+    if(sum===0){ return; }
+    TYPES.forEach((t,i)=>{ $('share-'+i).value=Math.round(vals[i]/sum*100); });
+    calc(); renderLeadTable();
+  });
+  // Total sends slider: back-solve shops per lead from sends / leads
+  $('sends').addEventListener('input',()=>{
+    const leads=+$('leads').value;
+    let shops=Math.max(1, Math.round(+$('sends').value / leads));
+    shops=Math.min(50,shops);
+    $('shops').value=shops;
+    calc(); renderLeadTable();
+  });
+  // ---- per-lead simulated table (real leads) ----
+  // map a credit tier -> unlock rate (avg of matching TYPES rows) and its cap behaviour
+  function rateForTier(tier){
+    let idxs=[];
+    TYPES.forEach((t,i)=>{ if(t[1]===tier) idxs.push(i); });
+    if(!idxs.length){ // fallback: nearest
+      let best=0,bd=99; TYPES.forEach((t,i)=>{if(Math.abs(t[1]-tier)<bd){bd=Math.abs(t[1]-tier);best=i;}}); idxs=[best];
+    }
+    let s=0; idxs.forEach(i=>s+=+$('unl-'+i).value/100); return s/idxs.length;
+  }
+  // Poisson random draw
+  function poisson(lambda){
+    if(lambda<=0)return 0;
+    let L=Math.exp(-lambda),k=0,p=1;
+    do{k++;p*=Math.random();}while(p>L);
+    return k-1;
+  }
+  function renderLeadTable(){
+    const shops=+$('shops').value, rate=+$('rate').value, cap=+$('cap').value;
+    const simpleOn=$('simple-toggle').checked, buyersSet=+$('buyers').value;
+    const body=$('leadbody'); if(!body) return; body.innerHTML='';
+    let totBuys=0,totRev=0,sold=0;
+    REAL_LEADS.forEach((L,i)=>{
+      const [name,job,tier]=L;
+      const fee=tier*rate;
+      const lambda = simpleOn ? buyersSet : shops*rateForTier(tier);
+      let buys=Math.min(poisson(lambda), cap);
+      const rev=buys*fee;
+      totBuys+=buys; totRev+=rev; if(buys>0)sold++;
+      const tr=document.createElement('tr');
+      const dim = buys===0 ? 'opacity:.45;' : '';
+      tr.innerHTML=`<td class="l" style="${dim}color:var(--t3);">${i+1}</td>
+        <td class="l" style="${dim}"><span class="tname">${name}</span></td>
+        <td class="l" style="${dim}color:var(--t2);font-size:12px;">${job}<div class="tcr">${tier} cr</div></td>
+        <td style="${dim}">${money2(fee)}</td>
+        <td style="${dim}font-weight:700;color:${buys>0?'var(--blue-d)':'var(--t3)'};">${buys>0?buys:'—'}</td>
+        <td style="${dim}font-weight:600;">${buys>0?money2(rev):'—'}</td>`;
+      body.appendChild(tr);
+    });
+    $('lt-sold').textContent=sold;
+    $('lt-count').textContent=REAL_LEADS.length;
+    $('lt-buys').textContent=totBuys;
+    $('lt-rev').textContent=money(totRev);
+  }
+  function wireTypeEvents(){
+    TYPES.forEach((t,i)=>{
+      $('share-'+i).addEventListener('input',()=>{calc();renderLeadTable();});
+      $('unl-'+i).addEventListener('input',()=>{calc();renderLeadTable();});
+    });
+  }
+  var _rerollBtn=$('reroll'); if(_rerollBtn) _rerollBtn.addEventListener('click',renderLeadTable);
+  ['leads','shops','rate','cap'].forEach(id=>$(id).addEventListener('input',renderLeadTable));
+  renderLeadTable();
+
+  // sold-rate mode toggle
+  function updateSimpleUI(){
+    const on=$('simple-toggle').checked;
+    $('simple-body').style.display = on?'block':'none';
+    $('simple-sub').textContent = on
+      ? 'On — revenue is driven by this one number. The per-tier unlock rates below are ignored while this is on.'
+      : 'Off — revenue is driven by the detailed per-tier unlock rates below. Flip on to drive it by one simple number: how many of your leads get bought.';
+    const b=+$('buyers').value;
+    $('v-buyers').textContent=b.toFixed(1);
+    const pct=Math.min(100,b/5*100);
+    $('soldbar-fill').style.width=pct+'%';
+    $('soldbar-mark').style.left='calc('+pct+'% - 2px)';
+    const soldOnce = b<=0?0:(1-Math.exp(-b))*100;
+    $('soldnote').innerHTML = b===0
+      ? 'No leads sold — zero revenue.'
+      : `At <b>${b.toFixed(1)} buyers per lead</b>, each lead sells about ${b<1?'less than once':(b.toFixed(1)+' times')} on average — roughly <b>${Math.round(soldOnce)}%</b> of leads find at least one buyer. Drag left for fewer sales, right for more.`;
+  }
+  $('simple-toggle').addEventListener('change',()=>{updateSimpleUI();calc();renderLeadTable();});
+  $('buyers').addEventListener('input',()=>{updateSimpleUI();calc();renderLeadTable();});
+  updateSimpleUI();
+
+  buildTypeRows();
+  if(window.onLeadTypesChange) window.onLeadTypesChange(buildTypeRows);
+
+  function markActiveTier(){
+    const rv=(+$('rate').value).toFixed(2);
+    document.querySelectorAll('#sec-forecast .tierpill').forEach(function(p){
+      p.classList.toggle('active', Math.abs(parseFloat(p.dataset.rate)-rv)<0.005);
+    });
+  }
+  document.querySelectorAll('#sec-forecast .tierpill').forEach(function(p){
+    p.addEventListener('click', function(){
+      $('rate').value = p.dataset.rate;
+      $('rate').dispatchEvent(new Event('input'));
+      markActiveTier();
+    });
+  });
+  $('rate').addEventListener('input', markActiveTier);
+  markActiveTier();
+
+})();
+</script>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id);};
+  var money=function(n){return '$'+n.toLocaleString('en-AU',{minimumFractionDigits:0,maximumFractionDigits:0});};
+
+  var LEADS=[
+    {name:"George Henry", phone:"0417 385 785", vehicle:"HYUNDAI i30 Active 2018", rego:"NSW MNT83U", comments:"Car bouncing a lot over bumps, suspension check needed.", ref:"AH-3050", loc:"Rozelle", dist:"6.7", email:"george.henry@outlook.com", job:"Suspension work", fee:9.92, ago:28, status:"sold", soldOn:2, buyers:1, shops:7, soldIn:8, shopList:[{shop:"mycar Rozelle",stage:"won"},{shop:"Kmart Tyre & Auto Rozelle",stage:"sent"},{shop:"Ultra Tune Rozelle",stage:"sent"},{shop:"mycar Rozelle",stage:"sent"},{shop:"Novus Glass Rozelle",stage:"sent"},{shop:"Ultra Tune Rozelle",stage:"sent"},{shop:"Battery World Rozelle",stage:"sent"}]},
+    {name:"Callum Ahmed", phone:"0416 649 559", vehicle:"FORD Ranger XLT 2021", rego:"NSW DEM19Q", comments:"Due for the 60,000km log book service.", ref:"AH-3051", loc:"Lilyfield", dist:"6.1", email:"callum.ahmed@hotmail.com", job:"Log book service", fee:9.92, ago:200, status:"sold", soldOn:2, buyers:2, shops:6, soldIn:187, shopList:[{shop:"mycar Lilyfield",stage:"unlocked"},{shop:"Pink Slips Plus Lilyfield",stage:"won"},{shop:"Novus Glass Lilyfield",stage:"sent"},{shop:"Midas Lilyfield",stage:"sent"},{shop:"Kmart Tyre & Auto Lilyfield",stage:"sent"},{shop:"Beaurepaires Lilyfield",stage:"sent"}]},
+    {name:"Stephen", phone:"0423 813 848", vehicle:"MAZDA 3 Maxx 2020", rego:"NSW ZPT29G", comments:"Want a general check over before a long trip.", ref:"AH-3052", loc:"Balmain", dist:"7.7", email:"stephen.luck@outlook.com", job:"General inspection", fee:2.48, ago:40, status:"sold", soldOn:2, buyers:4, shops:4, soldIn:4, shopList:[{shop:"Pink Slips Plus Balmain",stage:"unlocked"},{shop:"Pedders Balmain",stage:"won"},{shop:"Marrickville Mechanical Balmain",stage:"unlocked"},{shop:"Bosch Service Balmain",stage:"unlocked"}]},
+    {name:"Vincent Anderson", phone:"0431 982 340", vehicle:"VOLKSWAGEN Golf 110TSI 2017", rego:"NSW KYP84V", comments:"Need a pink slip before renewing registration.", ref:"AH-3053", loc:"Newtown", dist:"3.2", email:"vincent.anderson@gmail.com", job:"Roadworthy inspection", fee:2.48, ago:5, status:"sold", soldOn:4, buyers:2, shops:6, soldIn:5, shopList:[{shop:"Battery World Newtown",stage:"won"},{shop:"Ultra Tune Newtown",stage:"unlocked"},{shop:"Tyreright Newtown",stage:"sent"},{shop:"Ultra Tune Newtown",stage:"sent"},{shop:"Clutch Pro Newtown",stage:"sent"},{shop:"Ultra Tune Newtown",stage:"sent"}]},
+    {name:"Olivia Mussen", phone:"0430 407 568", vehicle:"MERCEDES-BENZ C200 2012", rego:"NSW HUB68V", comments:"Rattling noise under the car when accelerating.", ref:"AH-3054", loc:"Croydon", dist:"5.3", email:"olivia.mussen@hotmail.com", job:"Exhaust Systems", fee:9.92, ago:200, status:"unsold", shops:4, opened:1, reason:"seen", attempts:3},
+    {name:"Petrina Ali", phone:"0432 409 726", vehicle:"ISUZU FRR 500 2019", rego:"NSW ZVN95T", comments:"Due for the 60,000km log book service.", ref:"AH-3055", loc:"Ashfield", dist:"5.5", email:"petrina.ali@outlook.com", job:"Basic Service", fee:9.92, ago:6, status:"unsold", shops:5, opened:3, reason:"seen", attempts:2},
+    {name:"Sherree Berta", phone:"0420 308 803", vehicle:"FORD Ranger XLT 2021", rego:"NSW RGM16C", comments:"Car's due a service, haven't had one in a while.", ref:"AH-3056", loc:"Petersham", dist:"4.7", email:"sherree.berta@hotmail.com", job:"Basic Service", fee:9.92, ago:8, status:"unsold", shops:4, opened:1, reason:"seen", attempts:3},
+    {name:"Charmaine Crick", phone:"0414 540 230", vehicle:"HONDA CR-V VTi 2017", rego:"NSW BJY15M", comments:"Exhaust really loud, think there's a hole in it.", ref:"AH-3057", loc:"Bondi", dist:"11.5", email:"charmaine.crick@gmail.com", job:"Exhaust Systems", fee:9.92, ago:19, status:"sold", soldOn:3, buyers:2, shops:6, soldIn:14, shopList:[{shop:"Jax Tyres Bondi",stage:"quoted"},{shop:"Exhaust Xpert Bondi",stage:"quoted"},{shop:"mycar Bondi",stage:"sent"},{shop:"O'Brien Glass Bondi",stage:"sent"},{shop:"Natrad Bondi",stage:"sent"},{shop:"Exhaust Xpert Bondi",stage:"sent"}]},
+    {name:"Anne Sanchez2", phone:"0410 283 854", vehicle:"MITSUBISHI Triton GLX 2019", rego:"NSW YUK95Z", comments:"Car's due a service, haven't had one in a while.", ref:"AH-3058", loc:"Petersham", dist:"3.8", email:"anne.sanchez2@gmail.com", job:"Full service", fee:9.92, ago:300, status:"unsold", shops:4, opened:1, reason:"afterhours", attempts:2},
+    {name:"Jett Reilly", phone:"0410 775 297", vehicle:"HYUNDAI i30 Sedan N-Line 2021", rego:"NSW KGB45M", comments:"Car's due a service, haven't had one in a while.", ref:"AH-3059", loc:"Petersham", dist:"3.8", email:"jett.reilly@hotmail.com", job:"Basic Service", fee:9.92, ago:14, status:"unsold", shops:6, opened:1, reason:"seen", attempts:1},
+    {name:"Hussain Patel", phone:"0433 905 421", vehicle:"HOLDEN Commodore SV6 2015", rego:"NSW LZC83G", comments:"Due for the 60,000km log book service.", ref:"AH-3060", loc:"Balmain", dist:"6.9", email:"hussain.patel@outlook.com", job:"Log book service", fee:9.92, ago:13, status:"unsold", shops:5, opened:3, reason:"seen", attempts:1},
+    {name:"Russell", phone:"0438 407 619", vehicle:"TOYOTA Camry Ascent 2016", rego:"NSW HKK47T", comments:"Grinding noise from the front brakes, needs a look.", ref:"AH-3061", loc:"Croydon", dist:"4.2", email:"russell.adams@gmail.com", job:"Brake works", fee:9.92, ago:6, status:"unsold", shops:5, opened:0, reason:"fewshops", attempts:3},
+    {name:"Ne Cook", phone:"0426 779 748", vehicle:"NISSAN X-Trail ST 2018", rego:"NSW QCY40X", comments:"Just need fitting done on 4 tyres I already have.", ref:"AH-3062", loc:"Bankstown", dist:"14.4", email:"ne.cook@outlook.com", job:"Tyre fitting", fee:2.48, ago:24, status:"sold", soldOn:1, buyers:1, shops:9, soldIn:10, shopList:[{shop:"Marrickville Mechanical Bankstown",stage:"won"},{shop:"Marrickville Mechanical Bankstown",stage:"sent"},{shop:"Marrickville Mechanical Bankstown",stage:"sent"},{shop:"Beaurepaires Bankstown",stage:"sent"},{shop:"Battery World Bankstown",stage:"sent"},{shop:"Enmore Auto Bankstown",stage:"sent"},{shop:"Tyreright Bankstown",stage:"sent"},{shop:"Ultra Tune Bankstown",stage:"sent"},{shop:"Bosch Service Bankstown",stage:"sent"}]},
+    {name:"Laurence Foster2", phone:"0432 493 606", vehicle:"SUBARU XV 2021", rego:"NSW KDS23P", comments:"Chip in the windscreen from a stone.", ref:"AH-3063", loc:"Enmore", dist:"2.7", email:"laurence.foster2@gmail.com", job:"Windscreens or Other Glass", fee:2.48, ago:90, status:"unsold", shops:3, opened:1, reason:"seen", attempts:3},
+    {name:"Annette Coleman", phone:"0429 934 836", vehicle:"TOYOTA Hilux SR5 2019", rego:"NSW XLX67F", comments:"Aircon blowing warm, needs a regas.", ref:"AH-3064", loc:"Rozelle", dist:"6.7", email:"annette.coleman@hotmail.com", job:"Air Conditioning", fee:7.44, ago:10, status:"unsold", shops:8, opened:2, reason:"seen", attempts:2},
+    {name:"Henry O'Brien", phone:"0414 336 492", vehicle:"HOLDEN Commodore SV6 2015", rego:"NSW SSB62L", comments:"No cold air at all from the aircon.", ref:"AH-3065", loc:"Summer Hill", dist:"4.1", email:"henry.obrien@hotmail.com", job:"Air Conditioning", fee:7.44, ago:58, status:"sold", soldOn:2, buyers:1, shops:4, soldIn:5, shopList:[{shop:"Novus Glass Summer Hill",stage:"won"},{shop:"Exhaust Xpert Summer Hill",stage:"sent"},{shop:"Ultra Tune Summer Hill",stage:"sent"},{shop:"Jax Tyres Summer Hill",stage:"sent"}]},
+    {name:"Timothy Chen", phone:"0423 597 129", vehicle:"NISSAN X-Trail ST 2018", rego:"NSW KSV31Q", comments:"Central locking stopped working.", ref:"AH-3066", loc:"Newtown", dist:"2.6", email:"timothy.chen@gmail.com", job:"Auto electrical", fee:7.44, ago:450, status:"sold", soldOn:2, buyers:2, shops:9, soldIn:245, shopList:[{shop:"Pink Slips Plus Newtown",stage:"won"},{shop:"City Auto Care Newtown",stage:"unlocked"},{shop:"Exhaust Xpert Newtown",stage:"sent"},{shop:"Exhaust Xpert Newtown",stage:"sent"},{shop:"Clutch Pro Newtown",stage:"sent"},{shop:"Kmart Tyre & Auto Newtown",stage:"sent"},{shop:"Enmore Auto Newtown",stage:"sent"},{shop:"Kmart Tyre & Auto Newtown",stage:"sent"},{shop:"Pedders Newtown",stage:"sent"}]},
+    {name:"Matthew Sharma", phone:"0418 870 951", vehicle:"NISSAN X-Trail ST 2018", rego:"NSW LWM79B", comments:"Brake warning light on, want pads and rotors checked.", ref:"AH-3067", loc:"Balmain", dist:"6.4", email:"matthew.sharma@outlook.com", job:"Brake repairs", fee:9.92, ago:200, status:"sold", soldOn:1, buyers:2, shops:8, soldIn:119, shopList:[{shop:"Pedders Balmain",stage:"won"},{shop:"Pink Slips Plus Balmain",stage:"unlocked"},{shop:"Novus Glass Balmain",stage:"sent"},{shop:"Beaurepaires Balmain",stage:"sent"},{shop:"Marrickville Mechanical Balmain",stage:"sent"},{shop:"Novus Glass Balmain",stage:"sent"},{shop:"Novus Glass Balmain",stage:"sent"},{shop:"Pink Slips Plus Balmain",stage:"sent"}]},
+    {name:"Kevin George", phone:"0431 217 677", vehicle:"HYUNDAI i30 Sedan N-Line 2021", rego:"NSW YMG57F", comments:"Brakes feel spongy and squeal when stopping.", ref:"AH-3068", loc:"Ashfield", dist:"5.8", email:"kevin.george@hotmail.com", job:"Brake works", fee:9.92, ago:14, status:"unsold", shops:7, opened:1, reason:"seen", attempts:2},
+    {name:"Varsha Green", phone:"0435 142 455", vehicle:"FORD Ranger XLT 2021", rego:"NSW NRB92L", comments:"Rego due this week, need a safety check.", ref:"AH-3069", loc:"Petersham", dist:"4.4", email:"varsha.green@gmail.com", job:"Safety & Rego Inspections", fee:2.48, ago:75, status:"sold", soldOn:3, buyers:2, shops:5, soldIn:49, shopList:[{shop:"Midas Petersham",stage:"unlocked"},{shop:"Bosch Service Petersham",stage:"unlocked"},{shop:"Clutch Pro Petersham",stage:"sent"},{shop:"Midas Petersham",stage:"sent"},{shop:"Natrad Petersham",stage:"sent"}]},
+    {name:"Sophie Tham", phone:"0438 561 349", vehicle:"TOYOTA Hilux SR5 2019", rego:"NSW UPS53A", comments:"Warning light on dash, needs a general check and service.", ref:"AH-3070", loc:"Lilyfield", dist:"5.0", email:"sophie.tham@outlook.com", job:"Mechanical Servicing", fee:9.92, ago:640, status:"sold", soldOn:2, buyers:3, shops:4, soldIn:277, shopList:[{shop:"Novus Glass Lilyfield",stage:"won"},{shop:"Kmart Tyre & Auto Lilyfield",stage:"quoted"},{shop:"Ultra Tune Lilyfield",stage:"quoted"},{shop:"Pedders Lilyfield",stage:"sent"}]},
+    {name:"Chino Buntain", phone:"0416 187 347", vehicle:"VOLKSWAGEN Golf 110TSI 2017", rego:"NSW TMU98R", comments:"Fleet of 3 vans need new tyres, ongoing work available.", ref:"AH-3071", loc:"Stanmore", dist:"3.8", email:"chino.buntain@hotmail.com", job:"Truck / fleet tyres", fee:14.88, ago:300, status:"unsold", shops:8, opened:0, reason:"afterhours", attempts:3},
+    {name:"Andrew Ferguson", phone:"0427 643 452", vehicle:"HYUNDAI i30 Sedan N-Line 2021", rego:"NSW LTH99Q", comments:"Rego due this week, need a safety check.", ref:"AH-3072", loc:"Summer Hill", dist:"5.0", email:"andrew.ferguson@outlook.com", job:"Safety & Rego Inspections", fee:2.48, ago:38, status:"unsold", shops:5, opened:2, reason:"fewshops", attempts:2},
+    {name:"Melinda Brymer", phone:"0425 383 841", vehicle:"FORD Ranger XLT 2021", rego:"NSW QUQ22G", comments:"Whining noise when turning, power steering issue.", ref:"AH-3073", loc:"Dulwich Hill", dist:"4.1", email:"melinda.brymer@outlook.com", job:"Steering repair", fee:9.92, ago:60, status:"unsold", shops:8, opened:1, reason:"seen", attempts:3},
+    {name:"Phill Fletcher", phone:"0437 112 687", vehicle:"TOYOTA Corolla Ascent Sport 2020", rego:"NSW GMJ16J", comments:"Looking at a used car, need a pre-purchase report.", ref:"AH-3074", loc:"Stanmore", dist:"3.5", email:"phill.fletcher@outlook.com", job:"Pre-purchase inspection", fee:2.48, ago:300, status:"unsold", shops:8, opened:3, reason:"afterhours", attempts:1},
+    {name:"Jamie", phone:"0429 909 733", vehicle:"HONDA CR-V VTi 2017", rego:"NSW FNL66K", comments:"Buying a car privately, want a general inspection.", ref:"AH-3075", loc:"Ashfield", dist:"5.2", email:"jamie.foster@hotmail.com", job:"General inspection", fee:2.48, ago:300, status:"sold", soldOn:2, buyers:4, shops:4, soldIn:156, shopList:[{shop:"Midas Ashfield",stage:"won"},{shop:"Exhaust Xpert Ashfield",stage:"unlocked"},{shop:"City Auto Care Ashfield",stage:"unlocked"},{shop:"Clutch Pro Ashfield",stage:"unlocked"}]},
+    {name:"Chriswin Bell", phone:"0412 260 345", vehicle:"BMW 3 Series 2019", rego:"NSW EBA67Y", comments:"Service due per the log book schedule.", ref:"AH-3076", loc:"Camperdown", dist:"4.2", email:"chriswin.bell@hotmail.com", job:"Log book service", fee:9.92, ago:8, status:"unsold", shops:4, opened:2, reason:"fewshops", attempts:3},
+    {name:"Olly Russell", phone:"0411 269 911", vehicle:"AUDI A3 2018", rego:"NSW HTP46Q", comments:"Car's due a service, haven't had one in a while.", ref:"AH-3077", loc:"Newtown", dist:"2.7", email:"olly.russell@gmail.com", job:"Full service", fee:9.92, ago:47, status:"sold", soldOn:4, buyers:1, shops:4, soldIn:41, shopList:[{shop:"Jax Tyres Newtown",stage:"unlocked"},{shop:"Pedders Newtown",stage:"sent"},{shop:"Jax Tyres Newtown",stage:"sent"},{shop:"Ultra Tune Newtown",stage:"sent"}]},
+    {name:"Fraser Cox", phone:"0434 874 279", vehicle:"KIA Cerato S 2020", rego:"NSW MRX33U", comments:"Brake warning light on, want pads and rotors checked.", ref:"AH-3078", loc:"Camperdown", dist:"4.4", email:"fraser.cox@outlook.com", job:"Brake repairs", fee:9.92, ago:52, status:"sold", soldOn:2, buyers:1, shops:7, soldIn:48, shopList:[{shop:"Kmart Tyre & Auto Camperdown",stage:"quoted"},{shop:"Natrad Camperdown",stage:"sent"},{shop:"Natrad Camperdown",stage:"sent"},{shop:"Bob Jane Camperdown",stage:"sent"},{shop:"Pedders Camperdown",stage:"sent"},{shop:"Natrad Camperdown",stage:"sent"},{shop:"mycar Camperdown",stage:"sent"}]},
+    {name:"John Milic", phone:"0420 358 431", vehicle:"TOYOTA Camry Ascent 2016", rego:"NSW CUW10X", comments:"Need a logbook service to keep warranty valid.", ref:"AH-3079", loc:"Lilyfield", dist:"6.4", email:"john.milic@hotmail.com", job:"Basic Service", fee:9.92, ago:28, status:"sold", soldOn:1, buyers:4, shops:4, soldIn:11, shopList:[{shop:"Exhaust Xpert Lilyfield",stage:"won"},{shop:"mycar Lilyfield",stage:"unlocked"},{shop:"Marrickville Mechanical Lilyfield",stage:"quoted"},{shop:"Ultra Tune Lilyfield",stage:"unlocked"}]},
+    {name:"Bastien Wong", phone:"0430 723 918", vehicle:"SUBARU XV 2021", rego:"NSW FDP80P", comments:"Jump started twice this week, need a new battery.", ref:"AH-3080", loc:"Newtown", dist:"2.6", email:"bastien.wong@gmail.com", job:"Batteries & Lights", fee:7.44, ago:110, status:"sold", soldOn:1, buyers:1, shops:3, soldIn:71, shopList:[{shop:"Enmore Auto Newtown",stage:"won"},{shop:"Midas Newtown",stage:"sent"},{shop:"Bob Jane Newtown",stage:"sent"}]},
+    {name:"Richard Walters", phone:"0436 594 583", vehicle:"SUBARU Forester 2.5i-L 2019", rego:"NSW FPK86S", comments:"Just need fitting done on 4 tyres I already have.", ref:"AH-3081", loc:"Petersham", dist:"3.9", email:"richard.walters@hotmail.com", job:"Tyre fitting", fee:2.48, ago:52, status:"unsold", shops:5, opened:2, reason:"seen", attempts:2},
+    {name:"Amy W.", phone:"0424 651 595", vehicle:"FORD Focus 2017", rego:"NSW JPP68L", comments:"Grinding noise from the front brakes, needs a look.", ref:"AH-3082", loc:"Ashfield", dist:"5.0", email:"amy.w.@gmail.com", job:"Brake repairs", fee:9.92, ago:20, status:"unsold", shops:5, opened:3, reason:"fewshops", attempts:1},
+    {name:"Brandon Mccowatt", phone:"0431 911 940", vehicle:"TOYOTA Corolla Ascent Sport 2020", rego:"NSW RDZ26S", comments:"Looking at a used car, need a pre-purchase report.", ref:"AH-3083", loc:"Dulwich Hill", dist:"4.8", email:"brandon.mccowatt@hotmail.com", job:"Pre-purchase inspection", fee:2.48, ago:300, status:"unsold", shops:8, opened:3, reason:"afterhours", attempts:2},
+    {name:"Frank Jarmey", phone:"0432 507 765", vehicle:"FORD Focus 2017", rego:"NSW BHS78N", comments:"Brakes feel spongy and squeal when stopping.", ref:"AH-3084", loc:"Petersham", dist:"4.6", email:"frank.jarmey@outlook.com", job:"Brake repairs", fee:9.92, ago:47, status:"sold", soldOn:4, buyers:2, shops:4, soldIn:42, shopList:[{shop:"Enmore Auto Petersham",stage:"won"},{shop:"Pedders Petersham",stage:"unlocked"},{shop:"Novus Glass Petersham",stage:"sent"},{shop:"Clutch Pro Petersham",stage:"sent"}]},
+    {name:"Mia Prasad", phone:"0413 878 748", vehicle:"HYUNDAI i30 Active 2018", rego:"NSW SCD48A", comments:"Car needs inspection for registration.", ref:"AH-3085", loc:"Lilyfield", dist:"6.2", email:"mia.prasad@gmail.com", job:"Safety & Rego Inspections", fee:2.48, ago:300, status:"unsold", shops:5, opened:0, reason:"afterhours", attempts:2},
+    {name:"Mohamed K.", phone:"0414 337 572", vehicle:"SUBARU Forester 2.5i-L 2019", rego:"NSW RMS69K", comments:"Need a logbook service to keep warranty valid.", ref:"AH-3086", loc:"Newtown", dist:"2.8", email:"mohamed.k.@hotmail.com", job:"Basic Service", fee:9.92, ago:18, status:"sold", soldOn:4, buyers:3, shops:7, soldIn:6, shopList:[{shop:"Ultra Tune Newtown",stage:"won"},{shop:"Clutch Pro Newtown",stage:"unlocked"},{shop:"Pink Slips Plus Newtown",stage:"unlocked"},{shop:"Clutch Pro Newtown",stage:"sent"},{shop:"Kmart Tyre & Auto Newtown",stage:"sent"},{shop:"Enmore Auto Newtown",stage:"sent"},{shop:"Natrad Newtown",stage:"sent"}]},
+    {name:"David Hockington", phone:"0422 973 594", vehicle:"TESLA Model 3 2023", rego:"NSW CKJ47Y", comments:"Need a pink slip before renewing registration.", ref:"AH-3087", loc:"Ashfield", dist:"5.3", email:"david.hockington@outlook.com", job:"Safety & Rego", fee:2.48, ago:110, status:"unsold", shops:8, opened:2, reason:"seen", attempts:1},
+    {name:"Noor", phone:"0429 921 460", vehicle:"BMW 3 Series 2019", rego:"NSW FEG94X", comments:"Warning light on dash, needs a general check and service.", ref:"AH-3088", loc:"Bankstown", dist:"13.7", email:"noor.nair@gmail.com", job:"Full service", fee:9.92, ago:5, status:"unsold", shops:8, opened:2, reason:"seen", attempts:1},
+    {name:"Saurabh Turner", phone:"0423 279 305", vehicle:"NISSAN X-Trail ST 2018", rego:"NSW DNZ77S", comments:"Exhaust really loud, think there's a hole in it.", ref:"AH-3089", loc:"Newtown", dist:"2.8", email:"saurabh.turner@outlook.com", job:"Exhaust Systems", fee:9.92, ago:300, status:"unsold", shops:3, opened:2, reason:"afterhours", attempts:3},
+    {name:"Augustine Wells", phone:"0437 792 841", vehicle:"BMW 3 Series 2019", rego:"NSW SKW81M", comments:"Grinding noise from the front brakes, needs a look.", ref:"AH-3090", loc:"Bondi", dist:"12.9", email:"augustine.wells@gmail.com", job:"Brake repairs", fee:9.92, ago:300, status:"unsold", shops:6, opened:1, reason:"afterhours", attempts:1},
+    {name:"Dean Ross", phone:"0431 339 582", vehicle:"ISUZU FRR 500 2019", rego:"NSW AXP88H", comments:"Rego due this week, need a safety check.", ref:"AH-3091", loc:"Marrickville", dist:"2.0", email:"dean.ross@hotmail.com", job:"Safety & Rego Inspections", fee:2.48, ago:300, status:"unsold", shops:5, opened:2, reason:"fewshops", attempts:1},
+    {name:"Harris", phone:"0424 479 786", vehicle:"TOYOTA Camry Ascent 2016", rego:"NSW YSN85Z", comments:"Just had new tyres, want them balanced properly.", ref:"AH-3092", loc:"Summer Hill", dist:"5.2", email:"harris.hayes@hotmail.com", job:"Wheel balancing", fee:2.48, ago:9, status:"sold", soldOn:2, buyers:1, shops:3, soldIn:2, shopList:[{shop:"Exhaust Xpert Summer Hill",stage:"won"},{shop:"Jax Tyres Summer Hill",stage:"sent"},{shop:"Pink Slips Plus Summer Hill",stage:"sent"}]},
+    {name:"Dev Barnes", phone:"0418 294 225", vehicle:"TOYOTA Camry Ascent 2016", rego:"NSW YVC37W", comments:"Warning light on dash, needs a general check and service.", ref:"AH-3093", loc:"Croydon", dist:"5.2", email:"dev.barnes@hotmail.com", job:"Mechanical Servicing", fee:9.92, ago:20, status:"sold", soldOn:2, buyers:1, shops:5, soldIn:15, shopList:[{shop:"O'Brien Glass Croydon",stage:"unlocked"},{shop:"Exhaust Xpert Croydon",stage:"sent"},{shop:"O'Brien Glass Croydon",stage:"sent"},{shop:"mycar Croydon",stage:"sent"},{shop:"Pink Slips Plus Croydon",stage:"sent"}]},
+    {name:"Pierce Suh", phone:"0413 776 987", vehicle:"SUBARU Forester 2.5i-L 2019", rego:"NSW AAU40U", comments:"Due for the 60,000km log book service.", ref:"AH-3094", loc:"Marrickville", dist:"1.7", email:"pierce.suh@outlook.com", job:"Basic Service", fee:9.92, ago:70, status:"sold", soldOn:2, buyers:4, shops:9, soldIn:27, shopList:[{shop:"Jax Tyres Marrickville",stage:"quoted"},{shop:"Clutch Pro Marrickville",stage:"quoted"},{shop:"Bob Jane Marrickville",stage:"won"},{shop:"Pedders Marrickville",stage:"unlocked"},{shop:"Jax Tyres Marrickville",stage:"sent"},{shop:"Jax Tyres Marrickville",stage:"sent"},{shop:"Exhaust Xpert Marrickville",stage:"sent"},{shop:"Pedders Marrickville",stage:"sent"},{shop:"Tyreright Marrickville",stage:"sent"}]},
+    {name:"Joe", phone:"0423 802 210", vehicle:"FORD Ranger XLT 2021", rego:"NSW MXB20L", comments:"Jump started twice this week, need a new battery.", ref:"AH-3095", loc:"Bondi", dist:"11.5", email:"joe.battista@hotmail.com", job:"Batteries & Lights", fee:7.44, ago:6, status:"sold", soldOn:2, buyers:1, shops:9, soldIn:5, shopList:[{shop:"Clutch Pro Bondi",stage:"unlocked"},{shop:"mycar Bondi",stage:"sent"},{shop:"Battery World Bondi",stage:"sent"},{shop:"Bosch Service Bondi",stage:"sent"},{shop:"Marrickville Mechanical Bondi",stage:"sent"},{shop:"Bob Jane Bondi",stage:"sent"},{shop:"mycar Bondi",stage:"sent"},{shop:"Enmore Auto Bondi",stage:"sent"},{shop:"Pink Slips Plus Bondi",stage:"sent"}]},
+    {name:"Nathan", phone:"0423 847 197", vehicle:"MITSUBISHI Triton GLX 2019", rego:"NSW HHG29X", comments:"Picked up a nail, tyre losing air.", ref:"AH-3096", loc:"Leichhardt", dist:"5.8", email:"nathan.thompson@outlook.com", job:"Puncture repair", fee:2.48, ago:58, status:"sold", soldOn:2, buyers:2, shops:7, soldIn:7, shopList:[{shop:"City Auto Care Leichhardt",stage:"quoted"},{shop:"Marrickville Mechanical Leichhardt",stage:"won"},{shop:"Kmart Tyre & Auto Leichhardt",stage:"sent"},{shop:"City Auto Care Leichhardt",stage:"sent"},{shop:"Novus Glass Leichhardt",stage:"sent"},{shop:"Marrickville Mechanical Leichhardt",stage:"sent"},{shop:"Pink Slips Plus Leichhardt",stage:"sent"}]},
+    {name:"Rebecca", phone:"0413 520 462", vehicle:"BMW 3 Series 2019", rego:"NSW WYL16K", comments:"Warning light on dash, needs a general check and service.", ref:"AH-3097", loc:"Ashfield", dist:"4.7", email:"rebecca.grant@hotmail.com", job:"Basic Service", fee:9.92, ago:33, status:"unsold", shops:7, opened:2, reason:"seen", attempts:3},
+    {name:"Gary Bennett", phone:"0437 674 885", vehicle:"VOLVO XC40 2020", rego:"NSW VQR13V", comments:"Dash lights flickering, electrical fault somewhere.", ref:"AH-3098", loc:"Petersham", dist:"4.1", email:"gary.bennett@hotmail.com", job:"Auto electrical", fee:7.44, ago:50, status:"sold", soldOn:4, buyers:1, shops:3, soldIn:36, shopList:[{shop:"Natrad Petersham",stage:"won"},{shop:"Kmart Tyre & Auto Petersham",stage:"sent"},{shop:"City Auto Care Petersham",stage:"sent"}]},
+    {name:"Nikki Johns", phone:"0423 564 449", vehicle:"TESLA Model 3 2023", rego:"NSW DHH82V", comments:"Car needs inspection for registration.", ref:"AH-3099", loc:"Bondi", dist:"11.4", email:"nikki.johns@gmail.com", job:"Safety & Rego Inspections", fee:2.48, ago:28, status:"sold", soldOn:1, buyers:4, shops:4, soldIn:19, shopList:[{shop:"Ultra Tune Bondi",stage:"quoted"},{shop:"Battery World Bondi",stage:"quoted"},{shop:"Beaurepaires Bondi",stage:"unlocked"},{shop:"Pink Slips Plus Bondi",stage:"won"}]},
+    {name:"Nipuna Sheahan", phone:"0426 783 415", vehicle:"HYUNDAI i30 Active 2018", rego:"NSW BKQ10G", comments:"Service due per the log book schedule.", ref:"AH-3100", loc:"Leichhardt", dist:"5.7", email:"nipuna.sheahan@outlook.com", job:"Log book service", fee:9.92, ago:20, status:"sold", soldOn:2, buyers:2, shops:6, soldIn:15, shopList:[{shop:"O'Brien Glass Leichhardt",stage:"quoted"},{shop:"City Auto Care Leichhardt",stage:"unlocked"},{shop:"Midas Leichhardt",stage:"sent"},{shop:"Bosch Service Leichhardt",stage:"sent"},{shop:"Natrad Leichhardt",stage:"sent"},{shop:"Enmore Auto Leichhardt",stage:"sent"}]},
+    {name:"Simon Amey", phone:"0428 539 687", vehicle:"FORD Ranger XLT 2021", rego:"NSW KRG61A", comments:"Car's due a service, haven't had one in a while.", ref:"AH-3101", loc:"Leichhardt", dist:"6.6", email:"simon.amey@outlook.com", job:"Mechanical Servicing", fee:9.92, ago:2, status:"sold", soldOn:1, buyers:1, shops:6, soldIn:2, shopList:[{shop:"mycar Leichhardt",stage:"unlocked"},{shop:"City Auto Care Leichhardt",stage:"sent"},{shop:"Bob Jane Leichhardt",stage:"sent"},{shop:"Marrickville Mechanical Leichhardt",stage:"sent"},{shop:"Ultra Tune Leichhardt",stage:"sent"},{shop:"Novus Glass Leichhardt",stage:"sent"}]},
+    {name:"Janice Morrissey", phone:"0412 505 991", vehicle:"HYUNDAI i30 Active 2018", rego:"NSW HJH31C", comments:"Car's due a service, haven't had one in a while.", ref:"AH-3102", loc:"Redfern", dist:"4.8", email:"janice.morrissey@hotmail.com", job:"Full service", fee:9.92, ago:42, status:"unsold", shops:4, opened:3, reason:"seen", attempts:2},
+    {name:"Scott Jenkins", phone:"0415 716 256", vehicle:"BMW 3 Series 2019", rego:"NSW URE90R", comments:"Car's due a service, haven't had one in a while.", ref:"AH-3103", loc:"Rozelle", dist:"6.8", email:"scott.jenkins@outlook.com", job:"Mechanical Servicing", fee:9.92, ago:150, status:"unsold", shops:4, opened:2, reason:"seen", attempts:1},
+    {name:"Jennifer Lee", phone:"0436 393 178", vehicle:"VOLKSWAGEN Golf 110TSI 2017", rego:"NSW RZC86S", comments:"Truck tyre worn on the inside, need replacement.", ref:"AH-3104", loc:"Erskineville", dist:"3.4", email:"jennifer.lee@outlook.com", job:"Truck / fleet tyres", fee:14.88, ago:11, status:"sold", soldOn:3, buyers:2, shops:6, soldIn:5, shopList:[{shop:"Bosch Service Erskineville",stage:"unlocked"},{shop:"Marrickville Mechanical Erskineville",stage:"unlocked"},{shop:"Marrickville Mechanical Erskineville",stage:"sent"},{shop:"mycar Erskineville",stage:"sent"},{shop:"mycar Erskineville",stage:"sent"},{shop:"O'Brien Glass Erskineville",stage:"sent"}]},
+    {name:"Ross Diaz", phone:"0424 636 635", vehicle:"NISSAN X-Trail ST 2018", rego:"NSW QJY59P", comments:"Transmission jerks when shifting.", ref:"AH-3105", loc:"Balmain", dist:"7.9", email:"ross.diaz@outlook.com", job:"Transmission, Clutch & Diff", fee:9.92, ago:150, status:"sold", soldOn:2, buyers:2, shops:7, soldIn:39, shopList:[{shop:"Novus Glass Balmain",stage:"unlocked"},{shop:"Ultra Tune Balmain",stage:"won"},{shop:"Battery World Balmain",stage:"sent"},{shop:"Tyreright Balmain",stage:"sent"},{shop:"mycar Balmain",stage:"sent"},{shop:"Kmart Tyre & Auto Balmain",stage:"sent"},{shop:"Marrickville Mechanical Balmain",stage:"sent"}]},
+    {name:"Michael Reed", phone:"0412 696 779", vehicle:"VOLKSWAGEN Golf 110TSI 2017", rego:"NSW DJZ99X", comments:"Due for the 60,000km log book service.", ref:"AH-3106", loc:"Newtown", dist:"3.6", email:"michael.reed@outlook.com", job:"Basic Service", fee:9.92, ago:8, status:"unsold", shops:6, opened:1, reason:"seen", attempts:1},
+    {name:"Tayla", phone:"0431 533 620", vehicle:"VOLKSWAGEN Golf 110TSI 2017", rego:"NSW JJE37L", comments:"Various warning lights on, electrical issue.", ref:"AH-3107", loc:"Ashfield", dist:"5.1", email:"tayla.long@outlook.com", job:"Auto electrical", fee:7.44, ago:300, status:"unsold", shops:9, opened:0, reason:"afterhours", attempts:3},
+    {name:"Raska Henderson", phone:"0414 711 485", vehicle:"FORD Focus 2017", rego:"NSW DES89F", comments:"Can't get the car to you, need pick up and drop off.", ref:"AH-3108", loc:"Leichhardt", dist:"5.6", email:"raska.henderson@hotmail.com", job:"Pick up and delivery", fee:2.48, ago:60, status:"unsold", shops:7, opened:2, reason:"seen", attempts:3},
+    {name:"Ken Reid", phone:"0435 903 580", vehicle:"MITSUBISHI Triton GLX 2019", rego:"NSW XES83Q", comments:"Grinding noise from the front brakes, needs a look.", ref:"AH-3109", loc:"Croydon", dist:"4.8", email:"ken.reid@outlook.com", job:"Brake works", fee:9.92, ago:22, status:"unsold", shops:9, opened:1, reason:"seen", attempts:1},
+    {name:"Dorothy Lloyd", phone:"0438 625 250", vehicle:"MERCEDES-BENZ C200 2012", rego:"NSW VCX67M", comments:"Clutch slipping, hard to change gears.", ref:"AH-3110", loc:"Bankstown", dist:"14.1", email:"dorothy.lloyd@gmail.com", job:"Clutch work", fee:9.92, ago:80, status:"sold", soldOn:3, buyers:1, shops:5, soldIn:62, shopList:[{shop:"Bosch Service Bankstown",stage:"quoted"},{shop:"Ultra Tune Bankstown",stage:"sent"},{shop:"Tyreright Bankstown",stage:"sent"},{shop:"Pedders Bankstown",stage:"sent"},{shop:"Marrickville Mechanical Bankstown",stage:"sent"}]},
+    {name:"Priya Nguyen", phone:"0424 730 105", vehicle:"HYUNDAI i30 Active 2018", rego:"NSW XAF29T", comments:"Need a logbook service to keep warranty valid.", ref:"AH-3111", loc:"Bankstown", dist:"14.1", email:"priya.nguyen@hotmail.com", job:"Log book service", fee:9.92, ago:33, status:"sold", soldOn:4, buyers:1, shops:5, soldIn:22, shopList:[{shop:"mycar Bankstown",stage:"won"},{shop:"Bosch Service Bankstown",stage:"sent"},{shop:"Enmore Auto Bankstown",stage:"sent"},{shop:"Jax Tyres Bankstown",stage:"sent"},{shop:"Enmore Auto Bankstown",stage:"sent"}]},
+    {name:"Lily Rothero", phone:"0417 835 247", vehicle:"TESLA Model 3 2023", rego:"NSW GAJ83P", comments:"Slow leak in the rear tyre, needs a patch.", ref:"AH-3112", loc:"Croydon", dist:"4.4", email:"lily.rothero@gmail.com", job:"Puncture repair", fee:2.48, ago:9, status:"sold", soldOn:4, buyers:3, shops:6, soldIn:8, shopList:[{shop:"Enmore Auto Croydon",stage:"won"},{shop:"Clutch Pro Croydon",stage:"unlocked"},{shop:"Exhaust Xpert Croydon",stage:"unlocked"},{shop:"Bob Jane Croydon",stage:"sent"},{shop:"Battery World Croydon",stage:"sent"},{shop:"Natrad Croydon",stage:"sent"}]},
+    {name:"Sarah Sanders", phone:"0433 772 743", vehicle:"FORD Focus 2017", rego:"NSW CPU27B", comments:"Slow leak in the rear tyre, needs a patch.", ref:"AH-3113", loc:"Ashfield", dist:"5.4", email:"sarah.sanders@outlook.com", job:"Puncture repair", fee:2.48, ago:60, status:"sold", soldOn:1, buyers:2, shops:7, soldIn:25, shopList:[{shop:"O'Brien Glass Ashfield",stage:"won"},{shop:"Pedders Ashfield",stage:"quoted"},{shop:"Bob Jane Ashfield",stage:"sent"},{shop:"O'Brien Glass Ashfield",stage:"sent"},{shop:"Ultra Tune Ashfield",stage:"sent"},{shop:"O'Brien Glass Ashfield",stage:"sent"},{shop:"Kmart Tyre & Auto Ashfield",stage:"sent"}]},
+    {name:"Tom Thapa", phone:"0420 417 627", vehicle:"SUBARU XV 2021", rego:"NSW KVM14W", comments:"Ride feels rough, think shocks need replacing.", ref:"AH-3114", loc:"Stanmore", dist:"4.3", email:"tom.thapa@gmail.com", job:"Suspension or steering", fee:9.92, ago:110, status:"sold", soldOn:3, buyers:1, shops:4, soldIn:100, shopList:[{shop:"Beaurepaires Stanmore",stage:"won"},{shop:"mycar Stanmore",stage:"sent"},{shop:"Beaurepaires Stanmore",stage:"sent"},{shop:"mycar Stanmore",stage:"sent"}]},
+    {name:"Marcus Carosi", phone:"0412 540 716", vehicle:"FORD Ranger XLT 2021", rego:"NSW ZEH23C", comments:"Dropping off for repairs, is a loan car available?", ref:"AH-3115", loc:"Newtown", dist:"3.7", email:"marcus.carosi@outlook.com", job:"Courtesy car", fee:2.48, ago:33, status:"sold", soldOn:2, buyers:3, shops:6, soldIn:25, shopList:[{shop:"Enmore Auto Newtown",stage:"won"},{shop:"O'Brien Glass Newtown",stage:"quoted"},{shop:"Battery World Newtown",stage:"unlocked"},{shop:"Pedders Newtown",stage:"sent"},{shop:"Ultra Tune Newtown",stage:"sent"},{shop:"City Auto Care Newtown",stage:"sent"}]},
+    {name:"Dane Adiard", phone:"0426 920 867", vehicle:"AUDI A3 2018", rego:"NSW SYD87X", comments:"Brakes feel spongy and squeal when stopping.", ref:"AH-3116", loc:"Camperdown", dist:"4.0", email:"dane.adiard@outlook.com", job:"Brake repairs", fee:9.92, ago:45, status:"sold", soldOn:4, buyers:3, shops:3, soldIn:23, shopList:[{shop:"Ultra Tune Camperdown",stage:"quoted"},{shop:"Pink Slips Plus Camperdown",stage:"won"},{shop:"O'Brien Glass Camperdown",stage:"unlocked"}]},
+    {name:"Ahmed", phone:"0421 554 881", vehicle:"ISUZU FRR 500 2019", rego:"NSW BDJ50W", comments:"Car's due a service, haven't had one in a while.", ref:"AH-3117", loc:"Ashfield", dist:"5.0", email:"ahmed.d.@outlook.com", job:"Full service", fee:9.92, ago:35, status:"unsold", shops:3, opened:3, reason:"fewshops", attempts:1},
+    {name:"Jess Webb", phone:"0424 319 726", vehicle:"FORD Focus 2017", rego:"NSW GXM25E", comments:"Steering wheel off-centre after hitting a pothole.", ref:"AH-3118", loc:"Petersham", dist:"3.2", email:"jess.webb@gmail.com", job:"Wheel alignment", fee:2.48, ago:35, status:"unsold", shops:3, opened:2, reason:"seen", attempts:3},
+    {name:"Owen Novak", phone:"0427 686 477", vehicle:"ISUZU FRR 500 2019", rego:"NSW MZD21C", comments:"New tyres fitted, want an alignment to be safe.", ref:"AH-3119", loc:"Summer Hill", dist:"5.3", email:"owen.novak@outlook.com", job:"Wheel alignment", fee:2.48, ago:640, status:"sold", soldOn:1, buyers:1, shops:7, soldIn:162, shopList:[{shop:"Midas Summer Hill",stage:"unlocked"},{shop:"Beaurepaires Summer Hill",stage:"sent"},{shop:"Jax Tyres Summer Hill",stage:"sent"},{shop:"Kmart Tyre & Auto Summer Hill",stage:"sent"},{shop:"Enmore Auto Summer Hill",stage:"sent"},{shop:"Bob Jane Summer Hill",stage:"sent"},{shop:"O'Brien Glass Summer Hill",stage:"sent"}]},
+    {name:"Hannah Clark", phone:"0426 452 231", vehicle:"HYUNDAI i30 Active 2018", rego:"NSW XUR33E", comments:"Warning light on dash, needs a general check and service.", ref:"AH-3120", loc:"Lilyfield", dist:"5.6", email:"hannah.clark@outlook.com", job:"Mechanical Servicing", fee:9.92, ago:10, status:"unsold", shops:8, opened:3, reason:"seen", attempts:3},
+    {name:"Raj Bryant", phone:"0426 756 272", vehicle:"TESLA Model 3 2023", rego:"NSW QPE89Z", comments:"Due for a general service, oil and filters.", ref:"AH-3121", loc:"Newtown", dist:"3.6", email:"raj.bryant@hotmail.com", job:"Full service", fee:9.92, ago:12, status:"sold", soldOn:1, buyers:1, shops:8, soldIn:9, shopList:[{shop:"Beaurepaires Newtown",stage:"won"},{shop:"Exhaust Xpert Newtown",stage:"sent"},{shop:"Pedders Newtown",stage:"sent"},{shop:"Jax Tyres Newtown",stage:"sent"},{shop:"Bosch Service Newtown",stage:"sent"},{shop:"Clutch Pro Newtown",stage:"sent"},{shop:"Exhaust Xpert Newtown",stage:"sent"},{shop:"Ultra Tune Newtown",stage:"sent"}]},
+    {name:"Emily Ward", phone:"0430 131 609", vehicle:"TOYOTA Corolla Ascent Sport 2020", rego:"NSW XPR48R", comments:"Clutch slipping, hard to change gears.", ref:"AH-3122", loc:"Erskineville", dist:"2.8", email:"emily.ward@gmail.com", job:"Transmission, Clutch & Diff", fee:9.92, ago:150, status:"unsold", shops:5, opened:3, reason:"fewshops", attempts:3},
+    {name:"Liam Jordan", phone:"0413 426 347", vehicle:"TOYOTA Corolla Ascent Sport 2020", rego:"NSW MGF22B", comments:"Just need fitting done on 4 tyres I already have.", ref:"AH-3123", loc:"Bankstown", dist:"13.8", email:"liam.jordan@outlook.com", job:"Tyre fitting", fee:2.48, ago:12, status:"sold", soldOn:1, buyers:2, shops:6, soldIn:6, shopList:[{shop:"O'Brien Glass Bankstown",stage:"won"},{shop:"Pink Slips Plus Bankstown",stage:"quoted"},{shop:"Jax Tyres Bankstown",stage:"sent"},{shop:"O'Brien Glass Bankstown",stage:"sent"},{shop:"Battery World Bankstown",stage:"sent"},{shop:"Exhaust Xpert Bankstown",stage:"sent"}]},
+    {name:"Chloe Walsh", phone:"0417 320 697", vehicle:"NISSAN X-Trail ST 2018", rego:"NSW JBM93X", comments:"Grinding noise from the front brakes, needs a look.", ref:"AH-3124", loc:"Redfern", dist:"4.8", email:"chloe.walsh@outlook.com", job:"Brake works", fee:9.92, ago:26, status:"sold", soldOn:2, buyers:2, shops:4, soldIn:15, shopList:[{shop:"Ultra Tune Redfern",stage:"unlocked"},{shop:"Pink Slips Plus Redfern",stage:"won"},{shop:"Battery World Redfern",stage:"sent"},{shop:"Marrickville Mechanical Redfern",stage:"sent"}]},
+    {name:"Ryan McDonald", phone:"0427 299 471", vehicle:"HOLDEN Commodore SV6 2015", rego:"NSW PBN80J", comments:"Due for a general service, oil and filters.", ref:"AH-3125", loc:"Marrickville", dist:"3.0", email:"ryan.mcdonald@hotmail.com", job:"Mechanical Servicing", fee:9.92, ago:33, status:"unsold", shops:5, opened:0, reason:"seen", attempts:2},
+    {name:"Ella Cole", phone:"0426 511 612", vehicle:"ISUZU FRR 500 2019", rego:"NSW AAT70S", comments:"Steering shakes around 100km/h.", ref:"AH-3126", loc:"Petersham", dist:"3.4", email:"ella.cole@outlook.com", job:"Wheel balancing", fee:2.48, ago:28, status:"unsold", shops:5, opened:1, reason:"bounce", attempts:2},
+    {name:"Jack", phone:"0428 406 586", vehicle:"FORD Falcon XR6 2014", rego:"NSW VJS63U", comments:"Brakes feel spongy and squeal when stopping.", ref:"AH-3127", loc:"Rozelle", dist:"6.2", email:"jack.bridge@outlook.com", job:"Brake repairs", fee:9.92, ago:90, status:"unsold", shops:5, opened:3, reason:"fewshops", attempts:3},
+    {name:"Grace Johnson", phone:"0416 119 551", vehicle:"NISSAN X-Trail ST 2018", rego:"NSW HDS62S", comments:"Service due per the log book schedule.", ref:"AH-3128", loc:"Marrickville", dist:"2.6", email:"grace.johnson@hotmail.com", job:"Basic Service", fee:9.92, ago:70, status:"sold", soldOn:2, buyers:2, shops:3, soldIn:22, shopList:[{shop:"mycar Marrickville",stage:"quoted"},{shop:"Natrad Marrickville",stage:"quoted"},{shop:"Midas Marrickville",stage:"sent"}]},
+    {name:"Noah Pagotto", phone:"0419 330 404", vehicle:"VOLKSWAGEN Golf 110TSI 2017", rego:"NSW USS72L", comments:"Ride feels rough, think shocks need replacing.", ref:"AH-3129", loc:"Newtown", dist:"3.4", email:"noah.pagotto@outlook.com", job:"Suspension work", fee:9.92, ago:200, status:"sold", soldOn:1, buyers:1, shops:6, soldIn:118, shopList:[{shop:"Clutch Pro Newtown",stage:"won"},{shop:"Enmore Auto Newtown",stage:"sent"},{shop:"Beaurepaires Newtown",stage:"sent"},{shop:"Kmart Tyre & Auto Newtown",stage:"sent"},{shop:"Pedders Newtown",stage:"sent"},{shop:"Exhaust Xpert Newtown",stage:"sent"}]},
+    {name:"Zoe Fawcus", phone:"0432 378 240", vehicle:"ISUZU FRR 500 2019", rego:"NSW CTF16X", comments:"Battery light on, keeps dying if not driven daily.", ref:"AH-3130", loc:"Bondi", dist:"11.9", email:"zoe.fawcus@hotmail.com", job:"Batteries & Lights", fee:7.44, ago:11, status:"sold", soldOn:1, buyers:3, shops:5, soldIn:6, shopList:[{shop:"Beaurepaires Bondi",stage:"won"},{shop:"Beaurepaires Bondi",stage:"quoted"},{shop:"Exhaust Xpert Bondi",stage:"unlocked"},{shop:"Pedders Bondi",stage:"sent"},{shop:"Exhaust Xpert Bondi",stage:"sent"}]},
+    {name:"Lucas Sanchez", phone:"0427 856 840", vehicle:"AUDI A3 2018", rego:"NSW WAY63F", comments:"Car's due a service, haven't had one in a while.", ref:"AH-3131", loc:"Dulwich Hill", dist:"4.0", email:"lucas.sanchez@gmail.com", job:"Mechanical Servicing", fee:9.92, ago:50, status:"sold", soldOn:1, buyers:1, shops:9, soldIn:36, shopList:[{shop:"Enmore Auto Dulwich Hill",stage:"won"},{shop:"Beaurepaires Dulwich Hill",stage:"sent"},{shop:"Bosch Service Dulwich Hill",stage:"sent"},{shop:"Novus Glass Dulwich Hill",stage:"sent"},{shop:"Bosch Service Dulwich Hill",stage:"sent"},{shop:"mycar Dulwich Hill",stage:"sent"},{shop:"Ultra Tune Dulwich Hill",stage:"sent"},{shop:"Natrad Dulwich Hill",stage:"sent"},{shop:"Kmart Tyre & Auto Dulwich Hill",stage:"sent"}]},
+    {name:"Mia2 French", phone:"0415 848 569", vehicle:"TESLA Model 3 2023", rego:"NSW RTA53K", comments:"New tyres fitted, want an alignment to be safe.", ref:"AH-3132", loc:"Bankstown", dist:"14.6", email:"mia2.french@hotmail.com", job:"Wheel alignment", fee:2.48, ago:4, status:"sold", soldOn:1, buyers:2, shops:7, soldIn:3, shopList:[{shop:"Jax Tyres Bankstown",stage:"won"},{shop:"Battery World Bankstown",stage:"quoted"},{shop:"Marrickville Mechanical Bankstown",stage:"sent"},{shop:"Pedders Bankstown",stage:"sent"},{shop:"Beaurepaires Bankstown",stage:"sent"},{shop:"Midas Bankstown",stage:"sent"},{shop:"Novus Glass Bankstown",stage:"sent"}]},
+    {name:"Ethan Hassan", phone:"0433 686 111", vehicle:"FORD Focus 2017", rego:"NSW GJF95D", comments:"Rattling noise under the car when accelerating.", ref:"AH-3133", loc:"Enmore", dist:"2.8", email:"ethan.hassan@outlook.com", job:"Exhaust Systems", fee:9.92, ago:26, status:"sold", soldOn:1, buyers:1, shops:8, soldIn:5, shopList:[{shop:"Pedders Enmore",stage:"quoted"},{shop:"Pink Slips Plus Enmore",stage:"sent"},{shop:"Kmart Tyre & Auto Enmore",stage:"sent"},{shop:"Marrickville Mechanical Enmore",stage:"sent"},{shop:"Pedders Enmore",stage:"sent"},{shop:"Novus Glass Enmore",stage:"sent"},{shop:"Bosch Service Enmore",stage:"sent"},{shop:"Natrad Enmore",stage:"sent"}]},
+    {name:"Ava Baker", phone:"0414 589 256", vehicle:"FORD Ranger XLT 2021", rego:"NSW LZJ99T", comments:"Side mirror glass smashed, needs replacing.", ref:"AH-3134", loc:"Bankstown", dist:"14.4", email:"ava.baker@outlook.com", job:"Windscreens or Other Glass", fee:2.48, ago:110, status:"unsold", shops:5, opened:1, reason:"seen", attempts:1},
+    {name:"Mason King", phone:"0436 660 617", vehicle:"TOYOTA Hilux SR5 2019", rego:"NSW END76Q", comments:"Car needs inspection for registration.", ref:"AH-3135", loc:"Enmore", dist:"3.7", email:"mason.king@gmail.com", job:"Safety & Rego Inspections", fee:2.48, ago:300, status:"unsold", shops:3, opened:0, reason:"afterhours", attempts:1},
+    {name:"Ruby Griffin", phone:"0411 533 452", vehicle:"TOYOTA Hilux SR5 2019", rego:"NSW SNB18R", comments:"Need a pink slip done before rego renewal.", ref:"AH-3136", loc:"Erskineville", dist:"3.5", email:"ruby.griffin@gmail.com", job:"Safety & Rego Inspections", fee:2.48, ago:10, status:"sold", soldOn:1, buyers:2, shops:6, soldIn:9, shopList:[{shop:"Pink Slips Plus Erskineville",stage:"quoted"},{shop:"Pedders Erskineville",stage:"won"},{shop:"Bob Jane Erskineville",stage:"sent"},{shop:"Beaurepaires Erskineville",stage:"sent"},{shop:"Natrad Erskineville",stage:"sent"},{shop:"Ultra Tune Erskineville",stage:"sent"}]},
+    {name:"Leo Perry", phone:"0437 456 221", vehicle:"FORD Falcon XR6 2014", rego:"NSW ENN38A", comments:"Battery light on, keeps dying if not driven daily.", ref:"AH-3137", loc:"Stanmore", dist:"4.2", email:"leo.perry@gmail.com", job:"Batteries & Lights", fee:7.44, ago:45, status:"unsold", shops:6, opened:1, reason:"seen", attempts:3},
+    {name:"Isla Carr", phone:"0413 708 134", vehicle:"FORD Falcon XR6 2014", rego:"NSW LSW41Z", comments:"Car needs inspection for registration.", ref:"AH-3138", loc:"Summer Hill", dist:"4.8", email:"isla.carr@gmail.com", job:"Safety & Rego Inspections", fee:2.48, ago:16, status:"sold", soldOn:1, buyers:1, shops:5, soldIn:7, shopList:[{shop:"Clutch Pro Summer Hill",stage:"quoted"},{shop:"Bob Jane Summer Hill",stage:"sent"},{shop:"Kmart Tyre & Auto Summer Hill",stage:"sent"},{shop:"Beaurepaires Summer Hill",stage:"sent"},{shop:"Ultra Tune Summer Hill",stage:"sent"}]},
+    {name:"Hunter Smyth", phone:"0438 852 279", vehicle:"FORD Focus 2017", rego:"NSW RLM54W", comments:"Steering feels loose and vague at speed.", ref:"AH-3139", loc:"Dulwich Hill", dist:"4.8", email:"hunter.smyth@hotmail.com", job:"Steering repair", fee:9.92, ago:22, status:"sold", soldOn:1, buyers:2, shops:8, soldIn:19, shopList:[{shop:"Battery World Dulwich Hill",stage:"unlocked"},{shop:"Kmart Tyre & Auto Dulwich Hill",stage:"won"},{shop:"City Auto Care Dulwich Hill",stage:"sent"},{shop:"Bosch Service Dulwich Hill",stage:"sent"},{shop:"Pedders Dulwich Hill",stage:"sent"},{shop:"mycar Dulwich Hill",stage:"sent"},{shop:"Exhaust Xpert Dulwich Hill",stage:"sent"},{shop:"Natrad Dulwich Hill",stage:"sent"}]},
+    {name:"Lily2 Park", phone:"0417 361 308", vehicle:"SUBARU Forester 2.5i-L 2019", rego:"NSW HBL57C", comments:"Need a logbook service to keep warranty valid.", ref:"AH-3140", loc:"Rozelle", dist:"6.5", email:"lily2.park@hotmail.com", job:"Basic Service", fee:9.92, ago:24, status:"sold", soldOn:2, buyers:2, shops:9, soldIn:8, shopList:[{shop:"Marrickville Mechanical Rozelle",stage:"unlocked"},{shop:"mycar Rozelle",stage:"won"},{shop:"Exhaust Xpert Rozelle",stage:"sent"},{shop:"City Auto Care Rozelle",stage:"sent"},{shop:"City Auto Care Rozelle",stage:"sent"},{shop:"Exhaust Xpert Rozelle",stage:"sent"},{shop:"Battery World Rozelle",stage:"sent"},{shop:"Jax Tyres Rozelle",stage:"sent"},{shop:"Pink Slips Plus Rozelle",stage:"sent"}]},
+    {name:"Cooper Prosser", phone:"0416 294 859", vehicle:"MITSUBISHI Triton GLX 2019", rego:"NSW CZM41Y", comments:"Warning light on dash, needs a general check and service.", ref:"AH-3141", loc:"Enmore", dist:"2.6", email:"cooper.prosser@hotmail.com", job:"Mechanical Servicing", fee:9.92, ago:80, status:"sold", soldOn:4, buyers:1, shops:3, soldIn:76, shopList:[{shop:"Novus Glass Enmore",stage:"quoted"},{shop:"Bosch Service Enmore",stage:"sent"},{shop:"Bob Jane Enmore",stage:"sent"}]},
+    {name:"Amelia Manrique", phone:"0437 326 859", vehicle:"TESLA Model 3 2023", rego:"NSW DGY84Z", comments:"Car's due a service, haven't had one in a while.", ref:"AH-3142", loc:"Bankstown", dist:"14.8", email:"amelia.manrique@outlook.com", job:"Full service", fee:9.92, ago:35, status:"sold", soldOn:1, buyers:1, shops:8, soldIn:17, shopList:[{shop:"Enmore Auto Bankstown",stage:"unlocked"},{shop:"Novus Glass Bankstown",stage:"sent"},{shop:"Beaurepaires Bankstown",stage:"sent"},{shop:"O'Brien Glass Bankstown",stage:"sent"},{shop:"Novus Glass Bankstown",stage:"sent"},{shop:"City Auto Care Bankstown",stage:"sent"},{shop:"mycar Bankstown",stage:"sent"},{shop:"Natrad Bankstown",stage:"sent"}]},
+    {name:"Archie Ahmed2", phone:"0430 857 602", vehicle:"HYUNDAI i30 Sedan N-Line 2021", rego:"NSW MTJ27Z", comments:"Want an inspection before I pay for this car.", ref:"AH-3143", loc:"Enmore", dist:"3.0", email:"archie.ahmed2@hotmail.com", job:"Pre-purchase inspection", fee:2.48, ago:52, status:"unsold", shops:8, opened:3, reason:"seen", attempts:3},
+    {name:"Willow Menan", phone:"0414 962 745", vehicle:"TOYOTA Corolla Ascent Sport 2020", rego:"NSW FSA74Q", comments:"No cold air at all from the aircon.", ref:"AH-3144", loc:"Balmain", dist:"8.0", email:"willow.menan@outlook.com", job:"Air Conditioning", fee:7.44, ago:6, status:"unsold", shops:8, opened:0, reason:"seen", attempts:2},
+    {name:"Max", phone:"0419 117 614", vehicle:"MAZDA CX-5 Maxx Sport 2019", rego:"NSW VSV32D", comments:"Need a pink slip done before rego renewal.", ref:"AH-3145", loc:"Redfern", dist:"5.6", email:"max.kularatne@gmail.com", job:"Safety & Rego Inspections", fee:2.48, ago:60, status:"unsold", shops:3, opened:2, reason:"seen", attempts:3},
+    {name:"Piper M.", phone:"0425 157 752", vehicle:"HOLDEN Commodore SV6 2015", rego:"NSW AEM65W", comments:"Picked up a nail, tyre losing air.", ref:"AH-3146", loc:"Dulwich Hill", dist:"4.2", email:"piper.m.@outlook.com", job:"Puncture repair", fee:2.48, ago:38, status:"sold", soldOn:2, buyers:2, shops:6, soldIn:16, shopList:[{shop:"mycar Dulwich Hill",stage:"quoted"},{shop:"Ultra Tune Dulwich Hill",stage:"won"},{shop:"Pink Slips Plus Dulwich Hill",stage:"sent"},{shop:"Pink Slips Plus Dulwich Hill",stage:"sent"},{shop:"Pink Slips Plus Dulwich Hill",stage:"sent"},{shop:"Exhaust Xpert Dulwich Hill",stage:"sent"}]},
+    {name:"Toby Chen2", phone:"0439 387 656", vehicle:"MERCEDES-BENZ C200 2012", rego:"NSW PAY50A", comments:"Due for a general service, oil and filters.", ref:"AH-3147", loc:"Petersham", dist:"4.6", email:"toby.chen2@gmail.com", job:"Basic Service", fee:9.92, ago:450, status:"unsold", shops:6, opened:0, reason:"seen", attempts:3},
+    {name:"Freya Blake", phone:"0434 857 243", vehicle:"NISSAN X-Trail ST 2018", rego:"NSW USB54B", comments:"Brakes feel spongy and squeal when stopping.", ref:"AH-3148", loc:"Bankstown", dist:"14.8", email:"freya.blake@gmail.com", job:"Brake repairs", fee:9.92, ago:18, status:"unsold", shops:9, opened:2, reason:"seen", attempts:2},
+    {name:"Jake Turner2", phone:"0418 257 489", vehicle:"MAZDA CX-5 Maxx Sport 2019", rego:"NSW TRT50M", comments:"Rego due, need a safety check.", ref:"AH-3149", loc:"Ashfield", dist:"5.1", email:"jake.turner2@gmail.com", job:"Safety & Rego", fee:2.48, ago:110, status:"sold", soldOn:1, buyers:2, shops:6, soldIn:46, shopList:[{shop:"Ultra Tune Ashfield",stage:"quoted"},{shop:"Clutch Pro Ashfield",stage:"quoted"},{shop:"Bosch Service Ashfield",stage:"sent"},{shop:"Kmart Tyre & Auto Ashfield",stage:"sent"},{shop:"Ultra Tune Ashfield",stage:"sent"},{shop:"Ultra Tune Ashfield",stage:"sent"}]},
+    {name:"Nina", phone:"0435 432 984", vehicle:"SUBARU Forester 2.5i-L 2019", rego:"NSW KHK20Z", comments:"Due for a general service, oil and filters.", ref:"AH-3150", loc:"Camperdown", dist:"4.0", email:"nina.fisher@hotmail.com", job:"Mechanical Servicing", fee:9.92, ago:7, status:"sold", soldOn:2, buyers:2, shops:6, soldIn:5, shopList:[{shop:"Ultra Tune Camperdown",stage:"quoted"},{shop:"O'Brien Glass Camperdown",stage:"won"},{shop:"Exhaust Xpert Camperdown",stage:"sent"},{shop:"Ultra Tune Camperdown",stage:"sent"},{shop:"Clutch Pro Camperdown",stage:"sent"},{shop:"Clutch Pro Camperdown",stage:"sent"}]}
+  ];
+
+  var REACHED={
+  "AH-3050":[{shop:"mycar Rozelle",stage:"won",credits:2,paid:4.96,priced:"full"},{shop:"Kmart Tyre & Auto Rozelle",stage:"sent"},{shop:"Ultra Tune Rozelle",stage:"sent"},{shop:"mycar Rozelle",stage:"sent"},{shop:"Novus Glass Rozelle",stage:"sent"},{shop:"Ultra Tune Rozelle",stage:"sent"},{shop:"Battery World Rozelle",stage:"sent"}],
+  "AH-3051":[{shop:"mycar Lilyfield",stage:"unlocked",credits:3,paid:7.44,priced:"full"},{shop:"Pink Slips Plus Lilyfield",stage:"won",credits:1,paid:2.48,priced:"full"},{shop:"Novus Glass Lilyfield",stage:"sent"},{shop:"Midas Lilyfield",stage:"sent"},{shop:"Kmart Tyre & Auto Lilyfield",stage:"sent"},{shop:"Beaurepaires Lilyfield",stage:"sent"}],
+  "AH-3052":[{shop:"Pink Slips Plus Balmain",stage:"unlocked",credits:1,paid:2.48,priced:"full"},{shop:"Pedders Balmain",stage:"won",credits:1,paid:2.48,priced:"full"},{shop:"Marrickville Mechanical Balmain",stage:"unlocked",credits:1,paid:1.86,priced:"discount"},{shop:"Bosch Service Balmain",stage:"unlocked",credits:3,paid:7.44,priced:"full"}],
+  "AH-3053":[{shop:"Battery World Newtown",stage:"won",credits:1,paid:1.86,priced:"discount"},{shop:"Ultra Tune Newtown",stage:"unlocked",credits:3,paid:5.58,priced:"discount"},{shop:"Tyreright Newtown",stage:"sent"},{shop:"Ultra Tune Newtown",stage:"sent"},{shop:"Clutch Pro Newtown",stage:"sent"},{shop:"Ultra Tune Newtown",stage:"sent"}],
+  "AH-3054":[{shop:"Midas Petersham",stage:"sent"},{shop:"mycar Camperdown",stage:"sent"},{shop:"Marrickville Mechanical Marrickville",stage:"sent"},{shop:"Kmart Tyre & Auto Marrickville",stage:"sent"}],
+  "AH-3055":[{shop:"Clutch Pro Croydon",stage:"sent"},{shop:"Jax Tyres Leichhardt",stage:"sent"},{shop:"Enmore Auto Ashfield",stage:"sent"},{shop:"Clutch Pro Newtown",stage:"sent"},{shop:"Bosch Service Bondi",stage:"sent"}],
+  "AH-3056":[{shop:"Tyreright Newtown",stage:"sent"},{shop:"Beaurepaires Stanmore",stage:"sent"},{shop:"Midas Bondi",stage:"sent"},{shop:"Ultra Tune Camperdown",stage:"sent"}],
+  "AH-3057":[{shop:"Jax Tyres Bondi",stage:"quoted",credits:1,paid:2.48,priced:"full"},{shop:"Exhaust Xpert Bondi",stage:"quoted",credits:3,paid:7.44,priced:"full"},{shop:"mycar Bondi",stage:"sent"},{shop:"O'Brien Glass Bondi",stage:"sent"},{shop:"Natrad Bondi",stage:"sent"},{shop:"Exhaust Xpert Bondi",stage:"sent"}],
+  "AH-3058":[{shop:"Enmore Auto Bankstown",stage:"sent"},{shop:"Novus Glass Dulwich Hill",stage:"sent"},{shop:"Battery World Stanmore",stage:"sent"},{shop:"Bosch Service Petersham",stage:"sent"}],
+  "AH-3059":[{shop:"Tyreright Alexandria",stage:"sent"},{shop:"Kmart Tyre & Auto Newtown",stage:"sent"},{shop:"Bosch Service Bondi",stage:"sent"},{shop:"Exhaust Xpert Summer Hill",stage:"sent"},{shop:"Novus Glass Alexandria",stage:"sent"},{shop:"Battery World Leichhardt",stage:"sent"}],
+  "AH-3060":[{shop:"Ultra Tune Newtown",stage:"sent"},{shop:"Natrad Enmore",stage:"sent"},{shop:"Tyreright Bankstown",stage:"sent"},{shop:"Novus Glass Ashfield",stage:"sent"},{shop:"Exhaust Xpert Enmore",stage:"sent"}],
+  "AH-3061":[{shop:"mycar Liverpool",stage:"sent"},{shop:"Ultra Tune Bankstown",stage:"sent"},{shop:"Clutch Pro Camperdown",stage:"sent"},{shop:"Novus Glass Stanmore",stage:"sent"},{shop:"City Auto Care Camperdown",stage:"sent"}],
+  "AH-3062":[{shop:"Marrickville Mechanical Bankstown",stage:"won",credits:3,paid:7.44,priced:"full"},{shop:"Marrickville Mechanical Bankstown",stage:"sent"},{shop:"Marrickville Mechanical Bankstown",stage:"sent"},{shop:"Beaurepaires Bankstown",stage:"sent"},{shop:"Battery World Bankstown",stage:"sent"},{shop:"Enmore Auto Bankstown",stage:"sent"},{shop:"Tyreright Bankstown",stage:"sent"},{shop:"Ultra Tune Bankstown",stage:"sent"},{shop:"Bosch Service Bankstown",stage:"sent"}],
+  "AH-3063":[{shop:"Battery World Newtown",stage:"sent"},{shop:"Ultra Tune Leichhardt",stage:"sent"},{shop:"Exhaust Xpert Alexandria",stage:"sent"}],
+  "AH-3064":[{shop:"Ultra Tune Marrickville",stage:"sent"},{shop:"Bosch Service Liverpool",stage:"sent"},{shop:"Battery World Leichhardt",stage:"sent"},{shop:"Marrickville Mechanical Summer Hill",stage:"sent"},{shop:"City Auto Care Marrickville",stage:"sent"},{shop:"Battery World Stanmore",stage:"sent"},{shop:"Tyreright Camperdown",stage:"sent"},{shop:"Midas Dulwich Hill",stage:"sent"}],
+  "AH-3065":[{shop:"Novus Glass Summer Hill",stage:"won",credits:1,paid:1.86,priced:"discount"},{shop:"Exhaust Xpert Summer Hill",stage:"sent"},{shop:"Ultra Tune Summer Hill",stage:"sent"},{shop:"Jax Tyres Summer Hill",stage:"sent"}],
+  "AH-3066":[{shop:"Pink Slips Plus Newtown",stage:"won",credits:2,paid:3.72,priced:"discount"},{shop:"City Auto Care Newtown",stage:"unlocked",credits:1,paid:2.48,priced:"full"},{shop:"Exhaust Xpert Newtown",stage:"sent"},{shop:"Exhaust Xpert Newtown",stage:"sent"},{shop:"Clutch Pro Newtown",stage:"sent"},{shop:"Kmart Tyre & Auto Newtown",stage:"sent"},{shop:"Enmore Auto Newtown",stage:"sent"},{shop:"Kmart Tyre & Auto Newtown",stage:"sent"},{shop:"Pedders Newtown",stage:"sent"}],
+  "AH-3067":[{shop:"Pedders Balmain",stage:"won",credits:6,paid:14.88,priced:"full"},{shop:"Pink Slips Plus Balmain",stage:"unlocked",credits:1,paid:2.48,priced:"full"},{shop:"Novus Glass Balmain",stage:"sent"},{shop:"Beaurepaires Balmain",stage:"sent"},{shop:"Marrickville Mechanical Balmain",stage:"sent"},{shop:"Novus Glass Balmain",stage:"sent"},{shop:"Novus Glass Balmain",stage:"sent"},{shop:"Pink Slips Plus Balmain",stage:"sent"}],
+  "AH-3068":[{shop:"Clutch Pro Leichhardt",stage:"sent"},{shop:"Jax Tyres Croydon",stage:"sent"},{shop:"Enmore Auto Croydon",stage:"sent"},{shop:"Clutch Pro Leichhardt",stage:"sent"},{shop:"Enmore Auto Stanmore",stage:"sent"},{shop:"Marrickville Mechanical Petersham",stage:"sent"},{shop:"Jax Tyres Newtown",stage:"sent"}],
+  "AH-3069":[{shop:"Midas Petersham",stage:"unlocked",credits:1,paid:1.86,priced:"discount"},{shop:"Bosch Service Petersham",stage:"unlocked",credits:4,paid:7.44,priced:"discount"},{shop:"Clutch Pro Petersham",stage:"sent"},{shop:"Midas Petersham",stage:"sent"},{shop:"Natrad Petersham",stage:"sent"}],
+  "AH-3070":[{shop:"Novus Glass Lilyfield",stage:"won",credits:3,paid:7.44,priced:"full"},{shop:"Kmart Tyre & Auto Lilyfield",stage:"quoted",credits:1,paid:1.86,priced:"discount"},{shop:"Ultra Tune Lilyfield",stage:"quoted",credits:1,paid:1.86,priced:"discount"},{shop:"Pedders Lilyfield",stage:"sent"}],
+  "AH-3071":[{shop:"Clutch Pro Stanmore",stage:"sent"},{shop:"Novus Glass Ashfield",stage:"sent"},{shop:"Natrad Camperdown",stage:"sent"},{shop:"mycar Dulwich Hill",stage:"sent"},{shop:"Clutch Pro Enmore",stage:"sent"},{shop:"Marrickville Mechanical Enmore",stage:"sent"},{shop:"Marrickville Mechanical Newtown",stage:"sent"},{shop:"Exhaust Xpert Liverpool",stage:"sent"}],
+  "AH-3072":[{shop:"Marrickville Mechanical Marrickville",stage:"sent"},{shop:"Beaurepaires Newtown",stage:"sent"},{shop:"Beaurepaires Dulwich Hill",stage:"sent"},{shop:"Tyreright Newtown",stage:"sent"},{shop:"Novus Glass Camperdown",stage:"sent"}],
+  "AH-3073":[{shop:"mycar Newtown",stage:"sent"},{shop:"Bob Jane Camperdown",stage:"sent"},{shop:"Jax Tyres Bondi",stage:"sent"},{shop:"Midas Stanmore",stage:"sent"},{shop:"Bob Jane Newtown",stage:"sent"},{shop:"Beaurepaires Camperdown",stage:"sent"},{shop:"Marrickville Mechanical Ashfield",stage:"sent"},{shop:"Pedders Stanmore",stage:"sent"}],
+  "AH-3074":[{shop:"City Auto Care Dulwich Hill",stage:"sent"},{shop:"Midas Newtown",stage:"sent"},{shop:"Exhaust Xpert Dulwich Hill",stage:"sent"},{shop:"Exhaust Xpert Dulwich Hill",stage:"sent"},{shop:"Bosch Service Newtown",stage:"sent"},{shop:"Jax Tyres Newtown",stage:"sent"},{shop:"Novus Glass Alexandria",stage:"sent"},{shop:"Pedders Dulwich Hill",stage:"sent"}],
+  "AH-3075":[{shop:"Midas Ashfield",stage:"won",credits:6,paid:14.88,priced:"full"},{shop:"Exhaust Xpert Ashfield",stage:"unlocked",credits:4,paid:7.44,priced:"discount"},{shop:"City Auto Care Ashfield",stage:"unlocked",credits:4,paid:9.92,priced:"full"},{shop:"Clutch Pro Ashfield",stage:"unlocked",credits:4,paid:9.92,priced:"full"}],
+  "AH-3076":[{shop:"Bob Jane Bankstown",stage:"sent"},{shop:"Natrad Leichhardt",stage:"sent"},{shop:"Ultra Tune Alexandria",stage:"sent"},{shop:"Pedders Bondi",stage:"sent"}],
+  "AH-3077":[{shop:"Jax Tyres Newtown",stage:"unlocked",credits:2,paid:4.96,priced:"full"},{shop:"Pedders Newtown",stage:"sent"},{shop:"Jax Tyres Newtown",stage:"sent"},{shop:"Ultra Tune Newtown",stage:"sent"}],
+  "AH-3078":[{shop:"Kmart Tyre & Auto Camperdown",stage:"quoted",credits:2,paid:4.96,priced:"full"},{shop:"Natrad Camperdown",stage:"sent"},{shop:"Natrad Camperdown",stage:"sent"},{shop:"Bob Jane Camperdown",stage:"sent"},{shop:"Pedders Camperdown",stage:"sent"},{shop:"Natrad Camperdown",stage:"sent"},{shop:"mycar Camperdown",stage:"sent"}],
+  "AH-3079":[{shop:"Exhaust Xpert Lilyfield",stage:"won",credits:4,paid:9.92,priced:"full"},{shop:"mycar Lilyfield",stage:"unlocked",credits:4,paid:9.92,priced:"full"},{shop:"Marrickville Mechanical Lilyfield",stage:"quoted",credits:1,paid:2.48,priced:"full"},{shop:"Ultra Tune Lilyfield",stage:"unlocked",credits:6,paid:14.88,priced:"full"}],
+  "AH-3080":[{shop:"Enmore Auto Newtown",stage:"won",credits:6,paid:11.16,priced:"discount"},{shop:"Midas Newtown",stage:"sent"},{shop:"Bob Jane Newtown",stage:"sent"}],
+  "AH-3081":[{shop:"Kmart Tyre & Auto Croydon",stage:"sent"},{shop:"Marrickville Mechanical Alexandria",stage:"sent"},{shop:"Kmart Tyre & Auto Petersham",stage:"sent"},{shop:"Natrad Dulwich Hill",stage:"sent"},{shop:"City Auto Care Alexandria",stage:"sent"}],
+  "AH-3082":[{shop:"Bob Jane Marrickville",stage:"sent"},{shop:"Pedders Dulwich Hill",stage:"sent"},{shop:"Pedders Petersham",stage:"sent"},{shop:"City Auto Care Dulwich Hill",stage:"sent"},{shop:"City Auto Care Stanmore",stage:"sent"}],
+  "AH-3083":[{shop:"Ultra Tune Petersham",stage:"sent"},{shop:"Midas Petersham",stage:"sent"},{shop:"Exhaust Xpert Petersham",stage:"sent"},{shop:"Novus Glass Petersham",stage:"sent"},{shop:"Exhaust Xpert Camperdown",stage:"sent"},{shop:"Bob Jane Dulwich Hill",stage:"sent"},{shop:"City Auto Care Bankstown",stage:"sent"},{shop:"Ultra Tune Croydon",stage:"sent"}],
+  "AH-3084":[{shop:"Enmore Auto Petersham",stage:"won",credits:4,paid:7.44,priced:"discount"},{shop:"Pedders Petersham",stage:"unlocked",credits:3,paid:7.44,priced:"full"},{shop:"Novus Glass Petersham",stage:"sent"},{shop:"Clutch Pro Petersham",stage:"sent"}],
+  "AH-3085":[{shop:"Beaurepaires Dulwich Hill",stage:"sent"},{shop:"Tyreright Enmore",stage:"sent"},{shop:"Novus Glass Newtown",stage:"sent"},{shop:"Marrickville Mechanical Dulwich Hill",stage:"sent"},{shop:"Marrickville Mechanical Alexandria",stage:"sent"}],
+  "AH-3086":[{shop:"Ultra Tune Newtown",stage:"won",credits:1,paid:2.48,priced:"full"},{shop:"Clutch Pro Newtown",stage:"unlocked",credits:1,paid:2.48,priced:"full"},{shop:"Pink Slips Plus Newtown",stage:"unlocked",credits:1,paid:1.86,priced:"discount"},{shop:"Clutch Pro Newtown",stage:"sent"},{shop:"Kmart Tyre & Auto Newtown",stage:"sent"},{shop:"Enmore Auto Newtown",stage:"sent"},{shop:"Natrad Newtown",stage:"sent"}],
+  "AH-3087":[{shop:"Battery World Bankstown",stage:"sent"},{shop:"Jax Tyres Camperdown",stage:"sent"},{shop:"Exhaust Xpert Liverpool",stage:"sent"},{shop:"City Auto Care Ashfield",stage:"sent"},{shop:"Clutch Pro Bondi",stage:"sent"},{shop:"Jax Tyres Marrickville",stage:"sent"},{shop:"Bob Jane Bankstown",stage:"sent"},{shop:"Midas Bondi",stage:"sent"}],
+  "AH-3088":[{shop:"Jax Tyres Enmore",stage:"sent"},{shop:"Beaurepaires Croydon",stage:"sent"},{shop:"Beaurepaires Marrickville",stage:"sent"},{shop:"Pedders Petersham",stage:"sent"},{shop:"Bosch Service Bondi",stage:"sent"},{shop:"Kmart Tyre & Auto Bankstown",stage:"sent"},{shop:"Novus Glass Leichhardt",stage:"sent"},{shop:"Clutch Pro Enmore",stage:"sent"}],
+  "AH-3089":[{shop:"Jax Tyres Marrickville",stage:"sent"},{shop:"City Auto Care Summer Hill",stage:"sent"},{shop:"Battery World Liverpool",stage:"sent"}],
+  "AH-3090":[{shop:"Natrad Enmore",stage:"sent"},{shop:"Natrad Ashfield",stage:"sent"},{shop:"Clutch Pro Ashfield",stage:"sent"},{shop:"Natrad Bondi",stage:"sent"},{shop:"Bob Jane Croydon",stage:"sent"},{shop:"Battery World Bankstown",stage:"sent"}],
+  "AH-3091":[{shop:"Tyreright Camperdown",stage:"sent"},{shop:"Bob Jane Bankstown",stage:"sent"},{shop:"Jax Tyres Ashfield",stage:"sent"},{shop:"Jax Tyres Dulwich Hill",stage:"sent"},{shop:"Midas Bondi",stage:"sent"}],
+  "AH-3092":[{shop:"Exhaust Xpert Summer Hill",stage:"won",credits:1,paid:2.48,priced:"full"},{shop:"Jax Tyres Summer Hill",stage:"sent"},{shop:"Pink Slips Plus Summer Hill",stage:"sent"}],
+  "AH-3093":[{shop:"O'Brien Glass Croydon",stage:"unlocked",credits:4,paid:9.92,priced:"full"},{shop:"Exhaust Xpert Croydon",stage:"sent"},{shop:"O'Brien Glass Croydon",stage:"sent"},{shop:"mycar Croydon",stage:"sent"},{shop:"Pink Slips Plus Croydon",stage:"sent"}],
+  "AH-3094":[{shop:"Jax Tyres Marrickville",stage:"quoted",credits:3,paid:7.44,priced:"full"},{shop:"Clutch Pro Marrickville",stage:"quoted",credits:1,paid:2.48,priced:"full"},{shop:"Bob Jane Marrickville",stage:"won",credits:1,paid:1.86,priced:"discount"},{shop:"Pedders Marrickville",stage:"unlocked",credits:2,paid:3.72,priced:"discount"},{shop:"Jax Tyres Marrickville",stage:"sent"},{shop:"Jax Tyres Marrickville",stage:"sent"},{shop:"Exhaust Xpert Marrickville",stage:"sent"},{shop:"Pedders Marrickville",stage:"sent"},{shop:"Tyreright Marrickville",stage:"sent"}],
+  "AH-3095":[{shop:"Clutch Pro Bondi",stage:"unlocked",credits:1,paid:2.48,priced:"full"},{shop:"mycar Bondi",stage:"sent"},{shop:"Battery World Bondi",stage:"sent"},{shop:"Bosch Service Bondi",stage:"sent"},{shop:"Marrickville Mechanical Bondi",stage:"sent"},{shop:"Bob Jane Bondi",stage:"sent"},{shop:"mycar Bondi",stage:"sent"},{shop:"Enmore Auto Bondi",stage:"sent"},{shop:"Pink Slips Plus Bondi",stage:"sent"}],
+  "AH-3096":[{shop:"City Auto Care Leichhardt",stage:"quoted",credits:4,paid:7.44,priced:"discount"},{shop:"Marrickville Mechanical Leichhardt",stage:"won",credits:1,paid:2.48,priced:"full"},{shop:"Kmart Tyre & Auto Leichhardt",stage:"sent"},{shop:"City Auto Care Leichhardt",stage:"sent"},{shop:"Novus Glass Leichhardt",stage:"sent"},{shop:"Marrickville Mechanical Leichhardt",stage:"sent"},{shop:"Pink Slips Plus Leichhardt",stage:"sent"}],
+  "AH-3097":[{shop:"Natrad Camperdown",stage:"sent"},{shop:"Natrad Petersham",stage:"sent"},{shop:"Pedders Dulwich Hill",stage:"sent"},{shop:"Natrad Bondi",stage:"sent"},{shop:"Exhaust Xpert Bondi",stage:"sent"},{shop:"Kmart Tyre & Auto Alexandria",stage:"sent"},{shop:"Natrad Summer Hill",stage:"sent"}],
+  "AH-3098":[{shop:"Natrad Petersham",stage:"won",credits:2,paid:4.96,priced:"full"},{shop:"Kmart Tyre & Auto Petersham",stage:"sent"},{shop:"City Auto Care Petersham",stage:"sent"}],
+  "AH-3099":[{shop:"Ultra Tune Bondi",stage:"quoted",credits:1,paid:2.48,priced:"full"},{shop:"Battery World Bondi",stage:"quoted",credits:1,paid:2.48,priced:"full"},{shop:"Beaurepaires Bondi",stage:"unlocked",credits:3,paid:7.44,priced:"full"},{shop:"Pink Slips Plus Bondi",stage:"won",credits:1,paid:2.48,priced:"full"}],
+  "AH-3100":[{shop:"O'Brien Glass Leichhardt",stage:"quoted",credits:3,paid:5.58,priced:"discount"},{shop:"City Auto Care Leichhardt",stage:"unlocked",credits:4,paid:9.92,priced:"full"},{shop:"Midas Leichhardt",stage:"sent"},{shop:"Bosch Service Leichhardt",stage:"sent"},{shop:"Natrad Leichhardt",stage:"sent"},{shop:"Enmore Auto Leichhardt",stage:"sent"}],
+  "AH-3101":[{shop:"mycar Leichhardt",stage:"unlocked",credits:1,paid:2.48,priced:"full"},{shop:"City Auto Care Leichhardt",stage:"sent"},{shop:"Bob Jane Leichhardt",stage:"sent"},{shop:"Marrickville Mechanical Leichhardt",stage:"sent"},{shop:"Ultra Tune Leichhardt",stage:"sent"},{shop:"Novus Glass Leichhardt",stage:"sent"}],
+  "AH-3102":[{shop:"Jax Tyres Alexandria",stage:"sent"},{shop:"City Auto Care Ashfield",stage:"sent"},{shop:"Pedders Summer Hill",stage:"sent"},{shop:"Jax Tyres Dulwich Hill",stage:"sent"}],
+  "AH-3103":[{shop:"Kmart Tyre & Auto Alexandria",stage:"sent"},{shop:"Midas Enmore",stage:"sent"},{shop:"Exhaust Xpert Ashfield",stage:"sent"},{shop:"Kmart Tyre & Auto Ashfield",stage:"sent"}],
+  "AH-3104":[{shop:"Bosch Service Erskineville",stage:"unlocked",credits:4,paid:9.92,priced:"full"},{shop:"Marrickville Mechanical Erskineville",stage:"unlocked",credits:4,paid:9.92,priced:"full"},{shop:"Marrickville Mechanical Erskineville",stage:"sent"},{shop:"mycar Erskineville",stage:"sent"},{shop:"mycar Erskineville",stage:"sent"},{shop:"O'Brien Glass Erskineville",stage:"sent"}],
+  "AH-3105":[{shop:"Novus Glass Balmain",stage:"unlocked",credits:3,paid:5.58,priced:"discount"},{shop:"Ultra Tune Balmain",stage:"won",credits:2,paid:3.72,priced:"discount"},{shop:"Battery World Balmain",stage:"sent"},{shop:"Tyreright Balmain",stage:"sent"},{shop:"mycar Balmain",stage:"sent"},{shop:"Kmart Tyre & Auto Balmain",stage:"sent"},{shop:"Marrickville Mechanical Balmain",stage:"sent"}],
+  "AH-3106":[{shop:"City Auto Care Marrickville",stage:"sent"},{shop:"Novus Glass Bondi",stage:"sent"},{shop:"Battery World Dulwich Hill",stage:"sent"},{shop:"Bob Jane Enmore",stage:"sent"},{shop:"Novus Glass Bondi",stage:"sent"},{shop:"Bosch Service Bondi",stage:"sent"}],
+  "AH-3107":[{shop:"Ultra Tune Newtown",stage:"sent"},{shop:"Kmart Tyre & Auto Summer Hill",stage:"sent"},{shop:"Midas Newtown",stage:"sent"},{shop:"Pedders Leichhardt",stage:"sent"},{shop:"mycar Summer Hill",stage:"sent"},{shop:"Tyreright Leichhardt",stage:"sent"},{shop:"Jax Tyres Croydon",stage:"sent"},{shop:"Enmore Auto Croydon",stage:"sent"},{shop:"Pedders Enmore",stage:"sent"}],
+  "AH-3108":[{shop:"Jax Tyres Bondi",stage:"sent"},{shop:"Natrad Camperdown",stage:"sent"},{shop:"Exhaust Xpert Alexandria",stage:"sent"},{shop:"Novus Glass Newtown",stage:"sent"},{shop:"Pedders Marrickville",stage:"sent"},{shop:"Tyreright Enmore",stage:"sent"},{shop:"Ultra Tune Leichhardt",stage:"sent"}],
+  "AH-3109":[{shop:"Bob Jane Liverpool",stage:"sent"},{shop:"Ultra Tune Bankstown",stage:"sent"},{shop:"Pedders Newtown",stage:"sent"},{shop:"Kmart Tyre & Auto Newtown",stage:"sent"},{shop:"Pedders Croydon",stage:"sent"},{shop:"Midas Dulwich Hill",stage:"sent"},{shop:"Bob Jane Stanmore",stage:"sent"},{shop:"Clutch Pro Enmore",stage:"sent"},{shop:"Pedders Camperdown",stage:"sent"}],
+  "AH-3110":[{shop:"Bosch Service Bankstown",stage:"quoted",credits:1,paid:1.86,priced:"discount"},{shop:"Ultra Tune Bankstown",stage:"sent"},{shop:"Tyreright Bankstown",stage:"sent"},{shop:"Pedders Bankstown",stage:"sent"},{shop:"Marrickville Mechanical Bankstown",stage:"sent"}],
+  "AH-3111":[{shop:"mycar Bankstown",stage:"won",credits:4,paid:7.44,priced:"discount"},{shop:"Bosch Service Bankstown",stage:"sent"},{shop:"Enmore Auto Bankstown",stage:"sent"},{shop:"Jax Tyres Bankstown",stage:"sent"},{shop:"Enmore Auto Bankstown",stage:"sent"}],
+  "AH-3112":[{shop:"Enmore Auto Croydon",stage:"won",credits:1,paid:2.48,priced:"full"},{shop:"Clutch Pro Croydon",stage:"unlocked",credits:2,paid:3.72,priced:"discount"},{shop:"Exhaust Xpert Croydon",stage:"unlocked",credits:1,paid:2.48,priced:"full"},{shop:"Bob Jane Croydon",stage:"sent"},{shop:"Battery World Croydon",stage:"sent"},{shop:"Natrad Croydon",stage:"sent"}],
+  "AH-3113":[{shop:"O'Brien Glass Ashfield",stage:"won",credits:4,paid:9.92,priced:"full"},{shop:"Pedders Ashfield",stage:"quoted",credits:6,paid:11.16,priced:"discount"},{shop:"Bob Jane Ashfield",stage:"sent"},{shop:"O'Brien Glass Ashfield",stage:"sent"},{shop:"Ultra Tune Ashfield",stage:"sent"},{shop:"O'Brien Glass Ashfield",stage:"sent"},{shop:"Kmart Tyre & Auto Ashfield",stage:"sent"}],
+  "AH-3114":[{shop:"Beaurepaires Stanmore",stage:"won",credits:3,paid:7.44,priced:"full"},{shop:"mycar Stanmore",stage:"sent"},{shop:"Beaurepaires Stanmore",stage:"sent"},{shop:"mycar Stanmore",stage:"sent"}],
+  "AH-3115":[{shop:"Enmore Auto Newtown",stage:"won",credits:1,paid:1.86,priced:"discount"},{shop:"O'Brien Glass Newtown",stage:"quoted",credits:6,paid:11.16,priced:"discount"},{shop:"Battery World Newtown",stage:"unlocked",credits:2,paid:3.72,priced:"discount"},{shop:"Pedders Newtown",stage:"sent"},{shop:"Ultra Tune Newtown",stage:"sent"},{shop:"City Auto Care Newtown",stage:"sent"}],
+  "AH-3116":[{shop:"Ultra Tune Camperdown",stage:"quoted",credits:1,paid:2.48,priced:"full"},{shop:"Pink Slips Plus Camperdown",stage:"won",credits:4,paid:9.92,priced:"full"},{shop:"O'Brien Glass Camperdown",stage:"unlocked",credits:4,paid:9.92,priced:"full"}],
+  "AH-3117":[{shop:"Battery World Newtown",stage:"sent"},{shop:"Enmore Auto Liverpool",stage:"sent"},{shop:"Exhaust Xpert Bondi",stage:"sent"}],
+  "AH-3118":[{shop:"Marrickville Mechanical Bondi",stage:"sent"},{shop:"Bosch Service Alexandria",stage:"sent"},{shop:"Beaurepaires Petersham",stage:"sent"}],
+  "AH-3119":[{shop:"Midas Summer Hill",stage:"unlocked",credits:2,paid:3.72,priced:"discount"},{shop:"Beaurepaires Summer Hill",stage:"sent"},{shop:"Jax Tyres Summer Hill",stage:"sent"},{shop:"Kmart Tyre & Auto Summer Hill",stage:"sent"},{shop:"Enmore Auto Summer Hill",stage:"sent"},{shop:"Bob Jane Summer Hill",stage:"sent"},{shop:"O'Brien Glass Summer Hill",stage:"sent"}],
+  "AH-3120":[{shop:"Jax Tyres Enmore",stage:"sent"},{shop:"City Auto Care Marrickville",stage:"sent"},{shop:"Jax Tyres Marrickville",stage:"sent"},{shop:"Ultra Tune Liverpool",stage:"sent"},{shop:"Pedders Enmore",stage:"sent"},{shop:"Tyreright Marrickville",stage:"sent"},{shop:"Ultra Tune Liverpool",stage:"sent"},{shop:"Marrickville Mechanical Croydon",stage:"sent"}],
+  "AH-3121":[{shop:"Beaurepaires Newtown",stage:"won",credits:4,paid:9.92,priced:"full"},{shop:"Exhaust Xpert Newtown",stage:"sent"},{shop:"Pedders Newtown",stage:"sent"},{shop:"Jax Tyres Newtown",stage:"sent"},{shop:"Bosch Service Newtown",stage:"sent"},{shop:"Clutch Pro Newtown",stage:"sent"},{shop:"Exhaust Xpert Newtown",stage:"sent"},{shop:"Ultra Tune Newtown",stage:"sent"}],
+  "AH-3122":[{shop:"Bosch Service Camperdown",stage:"sent"},{shop:"Kmart Tyre & Auto Alexandria",stage:"sent"},{shop:"Bosch Service Marrickville",stage:"sent"},{shop:"Battery World Ashfield",stage:"sent"},{shop:"Tyreright Leichhardt",stage:"sent"}],
+  "AH-3123":[{shop:"O'Brien Glass Bankstown",stage:"won",credits:3,paid:5.58,priced:"discount"},{shop:"Pink Slips Plus Bankstown",stage:"quoted",credits:2,paid:4.96,priced:"full"},{shop:"Jax Tyres Bankstown",stage:"sent"},{shop:"O'Brien Glass Bankstown",stage:"sent"},{shop:"Battery World Bankstown",stage:"sent"},{shop:"Exhaust Xpert Bankstown",stage:"sent"}],
+  "AH-3124":[{shop:"Ultra Tune Redfern",stage:"unlocked",credits:4,paid:9.92,priced:"full"},{shop:"Pink Slips Plus Redfern",stage:"won",credits:1,paid:2.48,priced:"full"},{shop:"Battery World Redfern",stage:"sent"},{shop:"Marrickville Mechanical Redfern",stage:"sent"}],
+  "AH-3125":[{shop:"Bosch Service Petersham",stage:"sent"},{shop:"City Auto Care Ashfield",stage:"sent"},{shop:"Bob Jane Stanmore",stage:"sent"},{shop:"Marrickville Mechanical Newtown",stage:"sent"},{shop:"Exhaust Xpert Leichhardt",stage:"sent"}],
+  "AH-3126":[{shop:"Natrad Liverpool",stage:"sent"},{shop:"Beaurepaires Petersham",stage:"sent"},{shop:"Natrad Bankstown",stage:"sent"},{shop:"Bob Jane Newtown",stage:"sent"},{shop:"Pedders Croydon",stage:"sent"}],
+  "AH-3127":[{shop:"Ultra Tune Ashfield",stage:"sent"},{shop:"Marrickville Mechanical Camperdown",stage:"sent"},{shop:"mycar Enmore",stage:"sent"},{shop:"Bob Jane Leichhardt",stage:"sent"},{shop:"Bosch Service Liverpool",stage:"sent"}],
+  "AH-3128":[{shop:"mycar Marrickville",stage:"quoted",credits:1,paid:1.86,priced:"discount"},{shop:"Natrad Marrickville",stage:"quoted",credits:4,paid:9.92,priced:"full"},{shop:"Midas Marrickville",stage:"sent"}],
+  "AH-3129":[{shop:"Clutch Pro Newtown",stage:"won",credits:1,paid:2.48,priced:"full"},{shop:"Enmore Auto Newtown",stage:"sent"},{shop:"Beaurepaires Newtown",stage:"sent"},{shop:"Kmart Tyre & Auto Newtown",stage:"sent"},{shop:"Pedders Newtown",stage:"sent"},{shop:"Exhaust Xpert Newtown",stage:"sent"}],
+  "AH-3130":[{shop:"Beaurepaires Bondi",stage:"won",credits:4,paid:9.92,priced:"full"},{shop:"Beaurepaires Bondi",stage:"quoted",credits:4,paid:9.92,priced:"full"},{shop:"Exhaust Xpert Bondi",stage:"unlocked",credits:2,paid:4.96,priced:"full"},{shop:"Pedders Bondi",stage:"sent"},{shop:"Exhaust Xpert Bondi",stage:"sent"}],
+  "AH-3131":[{shop:"Enmore Auto Dulwich Hill",stage:"won",credits:3,paid:5.58,priced:"discount"},{shop:"Beaurepaires Dulwich Hill",stage:"sent"},{shop:"Bosch Service Dulwich Hill",stage:"sent"},{shop:"Novus Glass Dulwich Hill",stage:"sent"},{shop:"Bosch Service Dulwich Hill",stage:"sent"},{shop:"mycar Dulwich Hill",stage:"sent"},{shop:"Ultra Tune Dulwich Hill",stage:"sent"},{shop:"Natrad Dulwich Hill",stage:"sent"},{shop:"Kmart Tyre & Auto Dulwich Hill",stage:"sent"}],
+  "AH-3132":[{shop:"Jax Tyres Bankstown",stage:"won",credits:4,paid:9.92,priced:"full"},{shop:"Battery World Bankstown",stage:"quoted",credits:1,paid:1.86,priced:"discount"},{shop:"Marrickville Mechanical Bankstown",stage:"sent"},{shop:"Pedders Bankstown",stage:"sent"},{shop:"Beaurepaires Bankstown",stage:"sent"},{shop:"Midas Bankstown",stage:"sent"},{shop:"Novus Glass Bankstown",stage:"sent"}],
+  "AH-3133":[{shop:"Pedders Enmore",stage:"quoted",credits:6,paid:14.88,priced:"full"},{shop:"Pink Slips Plus Enmore",stage:"sent"},{shop:"Kmart Tyre & Auto Enmore",stage:"sent"},{shop:"Marrickville Mechanical Enmore",stage:"sent"},{shop:"Pedders Enmore",stage:"sent"},{shop:"Novus Glass Enmore",stage:"sent"},{shop:"Bosch Service Enmore",stage:"sent"},{shop:"Natrad Enmore",stage:"sent"}],
+  "AH-3134":[{shop:"Natrad Liverpool",stage:"sent"},{shop:"Enmore Auto Alexandria",stage:"sent"},{shop:"Natrad Ashfield",stage:"sent"},{shop:"Natrad Bankstown",stage:"sent"},{shop:"Natrad Camperdown",stage:"sent"}],
+  "AH-3135":[{shop:"Bob Jane Croydon",stage:"sent"},{shop:"Kmart Tyre & Auto Newtown",stage:"sent"},{shop:"Bob Jane Marrickville",stage:"sent"}],
+  "AH-3136":[{shop:"Pink Slips Plus Erskineville",stage:"quoted",credits:1,paid:2.48,priced:"full"},{shop:"Pedders Erskineville",stage:"won",credits:1,paid:2.48,priced:"full"},{shop:"Bob Jane Erskineville",stage:"sent"},{shop:"Beaurepaires Erskineville",stage:"sent"},{shop:"Natrad Erskineville",stage:"sent"},{shop:"Ultra Tune Erskineville",stage:"sent"}],
+  "AH-3137":[{shop:"Battery World Bondi",stage:"sent"},{shop:"mycar Liverpool",stage:"sent"},{shop:"Bob Jane Liverpool",stage:"sent"},{shop:"Clutch Pro Liverpool",stage:"sent"},{shop:"Kmart Tyre & Auto Dulwich Hill",stage:"sent"},{shop:"Pedders Marrickville",stage:"sent"}],
+  "AH-3138":[{shop:"Clutch Pro Summer Hill",stage:"quoted",credits:3,paid:7.44,priced:"full"},{shop:"Bob Jane Summer Hill",stage:"sent"},{shop:"Kmart Tyre & Auto Summer Hill",stage:"sent"},{shop:"Beaurepaires Summer Hill",stage:"sent"},{shop:"Ultra Tune Summer Hill",stage:"sent"}],
+  "AH-3139":[{shop:"Battery World Dulwich Hill",stage:"unlocked",credits:4,paid:9.92,priced:"full"},{shop:"Kmart Tyre & Auto Dulwich Hill",stage:"won",credits:4,paid:7.44,priced:"discount"},{shop:"City Auto Care Dulwich Hill",stage:"sent"},{shop:"Bosch Service Dulwich Hill",stage:"sent"},{shop:"Pedders Dulwich Hill",stage:"sent"},{shop:"mycar Dulwich Hill",stage:"sent"},{shop:"Exhaust Xpert Dulwich Hill",stage:"sent"},{shop:"Natrad Dulwich Hill",stage:"sent"}],
+  "AH-3140":[{shop:"Marrickville Mechanical Rozelle",stage:"unlocked",credits:4,paid:7.44,priced:"discount"},{shop:"mycar Rozelle",stage:"won",credits:4,paid:9.92,priced:"full"},{shop:"Exhaust Xpert Rozelle",stage:"sent"},{shop:"City Auto Care Rozelle",stage:"sent"},{shop:"City Auto Care Rozelle",stage:"sent"},{shop:"Exhaust Xpert Rozelle",stage:"sent"},{shop:"Battery World Rozelle",stage:"sent"},{shop:"Jax Tyres Rozelle",stage:"sent"},{shop:"Pink Slips Plus Rozelle",stage:"sent"}],
+  "AH-3141":[{shop:"Novus Glass Enmore",stage:"quoted",credits:6,paid:11.16,priced:"discount"},{shop:"Bosch Service Enmore",stage:"sent"},{shop:"Bob Jane Enmore",stage:"sent"}],
+  "AH-3142":[{shop:"Enmore Auto Bankstown",stage:"unlocked",credits:2,paid:3.72,priced:"discount"},{shop:"Novus Glass Bankstown",stage:"sent"},{shop:"Beaurepaires Bankstown",stage:"sent"},{shop:"O'Brien Glass Bankstown",stage:"sent"},{shop:"Novus Glass Bankstown",stage:"sent"},{shop:"City Auto Care Bankstown",stage:"sent"},{shop:"mycar Bankstown",stage:"sent"},{shop:"Natrad Bankstown",stage:"sent"}],
+  "AH-3143":[{shop:"Beaurepaires Petersham",stage:"sent"},{shop:"Battery World Dulwich Hill",stage:"sent"},{shop:"Marrickville Mechanical Newtown",stage:"sent"},{shop:"Exhaust Xpert Summer Hill",stage:"sent"},{shop:"Bosch Service Bankstown",stage:"sent"},{shop:"mycar Camperdown",stage:"sent"},{shop:"Beaurepaires Newtown",stage:"sent"},{shop:"Jax Tyres Stanmore",stage:"sent"}],
+  "AH-3144":[{shop:"Pedders Liverpool",stage:"sent"},{shop:"Bosch Service Camperdown",stage:"sent"},{shop:"Jax Tyres Marrickville",stage:"sent"},{shop:"Exhaust Xpert Marrickville",stage:"sent"},{shop:"Exhaust Xpert Leichhardt",stage:"sent"},{shop:"Midas Alexandria",stage:"sent"},{shop:"Beaurepaires Liverpool",stage:"sent"},{shop:"Exhaust Xpert Leichhardt",stage:"sent"}],
+  "AH-3145":[{shop:"Natrad Leichhardt",stage:"sent"},{shop:"Battery World Dulwich Hill",stage:"sent"},{shop:"Battery World Bankstown",stage:"sent"}],
+  "AH-3146":[{shop:"mycar Dulwich Hill",stage:"quoted",credits:1,paid:2.48,priced:"full"},{shop:"Ultra Tune Dulwich Hill",stage:"won",credits:4,paid:7.44,priced:"discount"},{shop:"Pink Slips Plus Dulwich Hill",stage:"sent"},{shop:"Pink Slips Plus Dulwich Hill",stage:"sent"},{shop:"Pink Slips Plus Dulwich Hill",stage:"sent"},{shop:"Exhaust Xpert Dulwich Hill",stage:"sent"}],
+  "AH-3147":[{shop:"Ultra Tune Summer Hill",stage:"sent"},{shop:"Exhaust Xpert Marrickville",stage:"sent"},{shop:"Bosch Service Dulwich Hill",stage:"sent"},{shop:"Ultra Tune Croydon",stage:"sent"},{shop:"Natrad Dulwich Hill",stage:"sent"},{shop:"Pedders Enmore",stage:"sent"}],
+  "AH-3148":[{shop:"Beaurepaires Summer Hill",stage:"sent"},{shop:"Beaurepaires Newtown",stage:"sent"},{shop:"Ultra Tune Ashfield",stage:"sent"},{shop:"Natrad Leichhardt",stage:"sent"},{shop:"City Auto Care Ashfield",stage:"sent"},{shop:"Natrad Leichhardt",stage:"sent"},{shop:"Midas Alexandria",stage:"sent"},{shop:"City Auto Care Petersham",stage:"sent"},{shop:"Exhaust Xpert Summer Hill",stage:"sent"}],
+  "AH-3149":[{shop:"Ultra Tune Ashfield",stage:"quoted",credits:3,paid:7.44,priced:"full"},{shop:"Clutch Pro Ashfield",stage:"quoted",credits:1,paid:1.86,priced:"discount"},{shop:"Bosch Service Ashfield",stage:"sent"},{shop:"Kmart Tyre & Auto Ashfield",stage:"sent"},{shop:"Ultra Tune Ashfield",stage:"sent"},{shop:"Ultra Tune Ashfield",stage:"sent"}],
+  "AH-3150":[{shop:"Ultra Tune Camperdown",stage:"quoted",credits:3,paid:7.44,priced:"full"},{shop:"O'Brien Glass Camperdown",stage:"won",credits:3,paid:7.44,priced:"full"},{shop:"Exhaust Xpert Camperdown",stage:"sent"},{shop:"Ultra Tune Camperdown",stage:"sent"},{shop:"Clutch Pro Camperdown",stage:"sent"},{shop:"Clutch Pro Camperdown",stage:"sent"}]
+};
+
+  // keyword aliases so existing job text keeps matching the right lead type
+  var TYPE_ALIASES={
+    "Truck tyres":["fleet","truck","tyre"], "Pre-purchase inspection":["pre-purchase","prepurchase"],
+    "Windscreens":["windscreen","glass"], "Puncture repairs":["puncture","balance","rotation"],
+    "Clutch and Transmission":["clutch","transmission"], "Air Conditioning":["aircon","air cond"],
+    "Tyre fitting":["tyre","tyres"], "Brake repairs":["brake"], "Exhaust systems":["exhaust"],
+    "Suspension":["suspension"], "Steering repairs":["steering"], "Batteries":["batter","battery"],
+    "Auto Electrical":["electr"], "Rego / safety inspection":["rego","safety"],
+    "Wheel alignments":["align"], "Mechanical Servicing":["service","mechanical"],
+    "Log book servicing":["logbook","log book"], "Wheel balancing":["balanc"],
+    "Inspections":["inspection"], "Roadworthy inspections":["roadworthy"],
+    "Pick up and delivery":["pickup","pick up","delivery"], "Courtesy car":["courtesy"]
+  };
+  function slugify(n){ return n.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+  function keywordsFor(entry){
+    var kw = (TYPE_ALIASES[entry.name]||[]).slice();
+    entry.name.toLowerCase().split(/[^a-z]+/).forEach(function(w){ if(w.length>=4 && kw.indexOf(w)===-1) kw.push(w); });
+    return kw;
+  }
+  function matchType(L){
+    var j=(L.job||'').toLowerCase(); var best=null,bestScore=0;
+    (window.LEAD_TYPES||[]).forEach(function(entry){
+      var kws=keywordsFor(entry); var score=0;
+      kws.forEach(function(k){ if(j.indexOf(k)>-1) score++; });
+      if(j.indexOf(entry.name.toLowerCase())>-1) score+=10;
+      if(score>bestScore){ bestScore=score; best=entry; }
+    });
+    return best;
+  }
+  function typeOf(L){ var m=matchType(L); return m?slugify(m.name):'other'; }
+  function worthOf(L){ var m=matchType(L); return m?Math.round((m.worthLow+m.worthHigh)/2):20; }
+  function buildTypeFilterOptions(){
+    var sel=$('flt-type'); if(!sel) return;
+    var prev=sel.value;
+    sel.innerHTML='<option value="all">All types</option>';
+    var byCat={};
+    (window.LEAD_TYPES||[]).forEach(function(t){ (byCat[t.category]=byCat[t.category]||[]).push(t); });
+    Object.keys(byCat).forEach(function(cat){
+      var og=document.createElement('optgroup'); og.label=cat;
+      byCat[cat].forEach(function(t){
+        var opt=document.createElement('option'); opt.value=slugify(t.name); opt.textContent=t.name;
+        og.appendChild(opt);
+      });
+      sel.appendChild(og);
+    });
+    if([...sel.options].some(function(o){return o.value===prev;})) sel.value=prev;
+  }
+  function receivedDate(L){return new Date(Date.now()-L.ago*60000);}
+  function agoTxt(m){return m<120?m+'m ago':Math.round(m/60)+'h ago';}
+  function ordinal(n){return n+({1:'st',2:'nd',3:'rd'}[n]||'th');}
+  function soldLabel(n){return n===1?'1st send':ordinal(n)+' try';}
+  function furthest(list){if(!list)return'unlocked';var f='unlocked';list.forEach(function(s){if(s.stage==='won')f='won';else if(s.stage==='quoted'&&f!=='won')f='quoted';});return f;}
+  function stageCell(L){
+    var f=furthest(L.shopList);
+    var s1=1,s2=(f==='quoted'||f==='won')?1:0,s3=(f==='won')?1:0;
+    var lbl=f.charAt(0).toUpperCase()+f.slice(1);
+    var uc=0,qc=0,wc=0;(L.shopList||[]).forEach(function(s){if(s.stage==='won')wc++;else if(s.stage==='quoted')qc++;else uc++;});
+    var noReply=uc;
+    var rows=(L.shopList||[]).map(function(s){return '<div class="pshop"><span class="pname">'+s.shop+'</span><span class="pw '+s.stage+'">'+s.stage+'</span></div>';}).join('');
+    var head=(L.buyers||0)+' unlocked · '+qc+' quoted'+(noReply>0?' · <b>'+noReply+' paid, no reply</b>':'');
+    return '<span class="stagewrap"><span class="stagelabel '+f+'">'+lbl+'</span>'+
+      '<span class="stagebar"><i class="on s1"></i><i class="'+(s2?'on ':'')+'s2"></i><i class="'+(s3?'on ':'')+'s3"></i></span>'+
+      '<span class="stagepop"><div class="pophead">'+head+'</div>'+rows+'</span></span>';
+  }
+  function soldRung(n){var s='<span class="rung sold">';for(var k=1;k<=4;k++)s+='<i class="'+(k<=n?'ons':'')+'"></i>';return s+'</span>';}
+  function rungHtml(rung,hot){var s='<span class="rung">';for(var k=1;k<=4;k++)s+='<i class="'+(k<=rung?'on':'')+' '+(hot&&k<=rung?'hot':'')+'"></i>';return s+'</span>';}
+  function plan(L){
+    if(L.attempts>=4)return{tier:"warm",rung:4,why:"Max attempts reached",act:"Retire",btn:"Retire",disc:false,retire:true};
+    if(L.reason==="bounce")return{tier:"hot",rung:Math.max(2,L.attempts+1),why:"&#9888; Email bounced",act:"Reroute",btn:"Reroute",disc:false};
+    if(L.reason==="afterhours")return{tier:"warm",rung:L.attempts+1,why:"&#0A5747; After hours",act:"Fire when shops open",btn:"Queue open",disc:false};
+    if(L.reason==="fewshops"&&L.shops<5)return{tier:"warm",rung:L.attempts+1,why:"Only reached "+L.shops+" shops",act:"Widen radius",btn:"Widen",disc:false};
+    if(L.ago>=45)return{tier:"hot",rung:4,why:"Hot — going cold",act:"Discount + push",btn:"Final push",disc:true};
+    if(L.ago>=30)return{tier:"warm",rung:3,why:"Cooling",act:"Widen to new shops",btn:"Widen",disc:false};
+    if(L.ago>=15)return{tier:"cool",rung:2,why:L.opened+" opened, no buy",act:"Nudge",btn:"Nudge",disc:false};
+    return{tier:"cool",rung:1,why:"Fresh",act:"Watching",btn:"Nudge now",disc:false};
+  }
+  function matchesFilter(L){
+    var q=($('flt-q').value||'').toLowerCase().trim();
+    var st=$('flt-status').value,ty=$('flt-type').value;
+    if(q&&(L.name+' '+L.job+' '+(L.ref||'')+' '+(L.loc||'')+' '+(L.email||'')).toLowerCase().indexOf(q)===-1)return false;
+    if(ty!=='all'&&typeOf(L)!==ty)return false;
+    var sd=$('flt-start').value,ed=$('flt-end').value;
+    if(sd||ed){var rd=receivedDate(L);if(sd){var s=new Date(sd+'T00:00:00');if(rd<s)return false;}if(ed){var e=new Date(ed+'T23:59:59');if(rd>e)return false;}}
+    if(st!=='all'){var f=L.status==='sold'?furthest(L.shopList):'unsold';
+      if(st==='sold'&&L.status!=='sold')return false;if(st==='unsold'&&L.status!=='unsold')return false;
+      if(st==='won'&&f!=='won')return false;if(st==='quoted'&&f!=='quoted')return false;if(st==='unlocked'&&f!=='unlocked')return false;}
+    return true;
+  }
+  var recovered=0;
+  function render(){
+    LEADS.sort(function(a,b){return a.ago-b.ago;});
+    var tb=$('all-body');tb.innerHTML='';
+    var sold=0,unsold=0,rev=0,unlocks=0,risk=0,hot=0,shown=0,totalShops=0;
+    var bd={1:0,2:0,3:0,4:0,chasing:0,dead:0};
+    LEADS.forEach(function(L,i){
+      if(!matchesFilter(L))return;shown++;
+      var tr=document.createElement('tr');
+      var custCells='<td><div class="cust cust-click" data-detail="'+i+'">'+L.name+' <span class="expand-ic">&#9662;</span></div><div class="job">'+L.job+'</div></td>'+
+        '<td><span class="loc">'+(L.loc||'&mdash;')+'</span></td>'+
+        '<td class="r">'+(L.dist?L.dist+' km':'&mdash;')+'</td>';
+      if(L.status==="sold"){
+        sold++;var r=L.fee*L.buyers;rev+=r;unlocks+=L.buyers;bd[L.soldOn||1]=(bd[L.soldOn||1]||0)+1;totalShops+=(L.shops||0);
+        tr.innerHTML='<td class="c"><span class="dot sold"></span></td>'+custCells+
+          '<td class="r">'+money(L.fee)+'</td>'+
+          '<td class="c">'+stageCell(L)+'</td>'+
+          '<td class="r">'+agoTxt(L.ago)+'</td>'+
+          '<td class="c"><span class="buyers">'+L.buyers+'</span> <span style="color:var(--t3);">/ '+L.shops+'</span></td>'+
+          '<td class="c">&mdash;</td>'+
+          '<td class="c">'+soldRung(L.soldOn||1)+'</td>'+
+          '<td class="c"><span class="soldon a'+(L.soldOn||1)+'">'+soldLabel(L.soldOn||1)+'</span></td>'+
+          '<td><span class="why">sold in '+L.soldIn+'m</span></td>'+
+          '<td class="r rev">'+money(r)+'</td>'+
+          '<td class="r">&mdash;</td>';
+      } else {
+        unsold++;risk+=worthOf(L);var p=plan(L);if(p.tier==="hot")hot++;if(p.retire)bd.dead++;else bd.chasing++;totalShops+=(L.shops||0);
+        tr.className=p.tier;
+        tr.innerHTML='<td class="c"><span class="dot '+p.tier+'"></span></td>'+custCells+
+          '<td class="r">'+money(L.fee)+'</td>'+
+          '<td class="c"><span class="mins">'+(p.retire?'Retiring':'Chasing')+'</span></td>'+
+          '<td class="r"><span class="mins">'+agoTxt(L.ago)+'</span></td>'+
+          '<td class="c"><span style="color:var(--t3);">0 / '+L.shops+'</span></td>'+
+          '<td class="c">'+(L.opened||'&mdash;')+'</td>'+
+          '<td class="c">'+rungHtml(p.rung,p.tier==='hot')+'</td>'+
+          '<td class="c"><span class="soldon '+(p.retire?'dead':'chasing')+'">'+(p.retire?"Didn't sell":"Not yet")+'</span></td>'+
+          '<td><span class="why">'+p.why+'</span>'+(p.disc?'<span class="disc">&minus;credits</span>':'')+'</td>'+
+          '<td class="r"><span class="worthlost">'+money(worthOf(L))+'</span></td>'+
+          '<td class="r"><button class="go '+(p.retire?'retire':p.tier)+'" data-i="'+i+'">'+p.btn+(p.retire?'':' &rarr;')+'</button></td>';
+      }
+      tb.appendChild(tr);
+    });
+    $('all-count').textContent=shown+(shown!==LEADS.length?' of '+LEADS.length:'')+' leads';
+    $('k-total').textContent=LEADS.length;$('k-sold').textContent=sold;
+    $('k-soldpct').textContent=Math.round(sold/LEADS.length*100)+'% of leads';
+    $('k-retarget').textContent=unsold;$('k-rev').textContent=money(rev);
+    $('k-unlocks').textContent=unlocks+' unlocks';$('k-risk').textContent=money(risk);
+    $('k-stores').textContent=totalShops.toLocaleString();
+    $('k-avgstores').textContent=(LEADS.length?(totalShops/LEADS.length).toFixed(1):'0')+' avg per lead';
+    var convRate = totalShops>0 ? (sold/totalShops*100) : 0;
+    $('conv-summary').innerHTML = 'Sent <b>'+LEADS.length.toLocaleString()+' leads</b> to <b>'+totalShops.toLocaleString()+' stores</b> in total &mdash; <b>'+sold+' sold</b> so far, a <b>'+convRate.toFixed(1)+'% conversion</b> (sold &divide; stores contacted). Per-lead: <b>'+Math.round(sold/LEADS.length*100)+'%</b> of leads found a buyer.';
+    $('bd-1').textContent=bd[1];$('bd-2').textContent=bd[2];$('bd-3').textContent=bd[3];$('bd-4').textContent=bd[4];
+    $('bd-un').textContent=bd.chasing;$('bd-dead').textContent=bd.dead;
+    var tot=bd[1]+bd[2]+bd[3]+bd[4]+bd.chasing+bd.dead||1;
+    var seg=function(c,n){return n>0?'<i class="'+c+'" style="width:'+(n/tot*100)+'%"></i>':'';};
+    $('bd-bar').innerHTML=seg('a1',bd[1])+seg('a2',bd[2])+seg('a3',bd[3])+seg('a4',bd[4])+seg('none',bd.chasing)+seg('dead',bd.dead);
+    tb.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){fire(+b.dataset.i);});});
+    tb.querySelectorAll('.cust-click').forEach(function(c){c.addEventListener('click',function(){toggleDetail(c,+c.dataset.detail);});});
+  }
+  function toggleDetail(cell, idx){
+    var row=cell.closest('tr');
+    var next=row.nextSibling;
+    if(next && next.classList && next.classList.contains('detailrow')){ next.remove(); cell.classList.remove('open'); return; }
+    // close any other open detail
+    var open=$('all-body').querySelector('.detailrow'); if(open) open.remove();
+    $('all-body').querySelectorAll('.cust-click.open').forEach(function(c){c.classList.remove('open');});
+    var L=LEADS[idx]; if(!L) return;
+    cell.classList.add('open');
+    var dr=document.createElement('tr'); dr.className='detailrow';
+    dr.innerHTML='<td colspan="14"><div class="detailcard">'+detailCard(L)+'</div></td>';
+    row.parentNode.insertBefore(dr, row.nextSibling);
+  }
+  function detailCard(L){
+    var line=function(k,v){ return '<div class="drow"><span class="dk">'+k+'</span><span class="dv">'+(v||'&mdash;')+'</span></div>'; };
+    var locFull=(L.loc||'')+(L.dist?' &middot; '+L.dist+' km from you':'');
+    var custInfo = line('Name', L.name)+
+      line('Phone', L.phone)+
+      line('Email', L.email)+
+      line('Location', locFull)+
+      line('Services', L.job)+
+      line('Vehicle', L.vehicle)+
+      line('Car rego', L.rego);
+    // stores it was sent to
+    var stores=(REACHED[L.ref]||[]);
+    var stageWord={won:'Won',quoted:'Quoted',unlocked:'Unlocked',sent:'Sent, no action'};
+    var storeRows = stores.length ? stores.map(function(s){
+      var bought=(s.stage==='won'||s.stage==='quoted'||s.stage==='unlocked');
+      var payInfo='';
+      if(bought && s.paid){
+        var priceTag = s.priced==='discount'
+          ? '<span class="ptag disc">discounted</span>'
+          : '<span class="ptag full">full price</span>';
+        payInfo='<span class="spaid">'+s.credits+' cr &middot; $'+s.paid.toFixed(2)+' '+priceTag+'</span>';
+      }
+      return '<div class="storerow"><span class="sname">'+s.shop+'</span>'+
+        '<span class="sright">'+payInfo+'<span class="sw '+s.stage+'">'+(stageWord[s.stage]||s.stage)+'</span></span></div>';
+    }).join('') : '<div class="storerow"><span class="sname" style="color:var(--t3);">No store data</span></div>';
+    var nBought=stores.filter(function(s){return s.stage==='won'||s.stage==='quoted'||s.stage==='unlocked';}).length;
+    var storesBlock='<div class="storesblock"><div class="storeshead">Sent to '+stores.length+' stores &middot; '+nBought+' unlocked</div>'+storeRows+'</div>';
+    var commentsRow='<div class="commentsfull"><span class="dk">Comments</span><span class="dv">'+(L.comments||'&mdash;')+'</span></div>';
+    return '<div class="detailcols"><div class="detailcol">'+custInfo+'</div><div class="detailcol stores">'+storesBlock+'</div></div>'+commentsRow;
+  }
+  function fire(i){var L=LEADS[i];var p=plan(L);if(p.retire){LEADS.splice(i,1);}else{L.status="sold";L.buyers=1;L.soldIn=L.ago;L.soldOn=(L.attempts||1)+1;L.shopList=[{shop:"Recovered shop",stage:"quoted"}];recovered+=L.fee;}render();}
+  ['flt-q','flt-status','flt-type','flt-start','flt-end'].forEach(function(id){var el=$(id);if(el)el.addEventListener('input',render);});
+  var fc=$('flt-clear');if(fc)fc.addEventListener('click',function(){$('flt-q').value='';$('flt-status').value='all';$('flt-type').value='all';$('flt-start').value='';$('flt-end').value='';render();});
+  buildTypeFilterOptions();
+  if(window.onLeadTypesChange) window.onLeadTypesChange(function(){ buildTypeFilterOptions(); render(); });
+  render();
+})();
+</script>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id);};
+
+  var TIER_RATES={payg:3.80, standard:3.36, pro:2.94};
+  function buildRows(){
+    var tb=$('pr-body'); if(!tb) return;
+    tb.innerHTML='';
+    var byCat={};
+    (window.LEAD_TYPES||[]).forEach(function(t){ (byCat[t.category]=byCat[t.category]||[]).push(t); });
+    Object.keys(byCat).forEach(function(cat){
+      var tr=document.createElement('tr'); tr.className='catrow';
+      tr.innerHTML='<td colspan="8">'+cat+'</td>';
+      tb.appendChild(tr);
+      byCat[cat].forEach(function(t){
+        var row=document.createElement('tr'); row.className='pr-row'; row.dataset.name=t.name;
+        row.innerHTML='<td>'+t.name+'</td>'+
+          '<td class="c"><input type="number" class="cr" value="'+t.credits+'" min="0" step="1"></td>'+
+          '<td class="r"><span class="tiercost payg">$0.00</span></td>'+
+          '<td class="r"><span class="tiercost standard">$0.00</span></td>'+
+          '<td class="r"><span class="tiercost pro">$0.00</span></td>'+
+          '<td class="r"><span class="tiercost custom">$0.00</span></td>'+
+          '<td class="c"><label class="tg"><input type="checkbox" checked aria-label="'+t.name+' active"><span class="sl"></span></label></td>'+
+          '<td class="c"><button class="pr-remove" title="Remove this lead type" data-name="'+t.name.replace(/"/g,'&quot;')+'">&times;</button></td>';
+        tb.appendChild(row);
+      });
+    });
+    recalc();
+    tb.querySelectorAll('.cr').forEach(function(inp){
+      inp.addEventListener('change', function(){
+        var tr=inp.closest('tr'); var t=(window.LEAD_TYPES||[]).find(function(x){return x.name===tr.dataset.name;});
+        if(t){ t.credits=parseFloat(inp.value)||0; window.notifyLeadTypesChange(); }
+      });
+    });
+    tb.querySelectorAll('.pr-remove').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        if(window.removeLeadType) window.removeLeadType(btn.dataset.name);
+      });
+    });
+  }
+  function recalc(){
+    var rate=parseFloat($('pr-rate').value)||0;
+    document.querySelectorAll('#sec-pricing tr.pr-row').forEach(function(tr){
+      var c=parseFloat(tr.querySelector('.cr').value)||0;
+      tr.querySelector('.tiercost.payg').textContent='$'+(c*TIER_RATES.payg).toFixed(2);
+      tr.querySelector('.tiercost.standard').textContent='$'+(c*TIER_RATES.standard).toFixed(2);
+      tr.querySelector('.tiercost.pro').textContent='$'+(c*TIER_RATES.pro).toFixed(2);
+      tr.querySelector('.tiercost.custom').textContent='$'+(c*rate).toFixed(2);
+    });
+  }
+  // keep in sync with the Forecast tab's credit-rate slider, if present
+  function syncFromForecast(){
+    var fr=$('rate'); if(fr) $('pr-rate').value=fr.value;
+    recalc();
+    if(typeof markActiveTierPricing==='function') markActiveTierPricing();
+  }
+
+  // ---- add new lead type form ----
+  function populateCategorySelect(){
+    var sel=$('pr-new-cat'); if(!sel) return;
+    var cats=[...new Set((window.LEAD_TYPES||[]).map(function(t){return t.category;}))];
+    var cur=sel.value;
+    sel.innerHTML='';
+    cats.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+    var newOpt=document.createElement('option'); newOpt.value='__new__'; newOpt.textContent='+ New category…';
+    sel.appendChild(newOpt);
+    if(cats.indexOf(cur)>-1) sel.value=cur;
+  }
+  function toggleAddForm(show){
+    var f=$('pr-addform'); if(!f) return;
+    f.style.display = show?'grid':'none';
+    $('pr-toggle-add').textContent = show?'Cancel':'+ Add service / lead type';
+    if(show) populateCategorySelect();
+  }
+  function submitNewType(){
+    var name=$('pr-new-name').value.trim();
+    var catSel=$('pr-new-cat').value;
+    var cat = catSel==='__new__' ? ($('pr-new-cat-other').value.trim()||'Other') : catSel;
+    var credits=parseFloat($('pr-new-credits').value)||1;
+    var share=parseFloat($('pr-new-share').value)||0;
+    var unlock=parseFloat($('pr-new-unlock').value)||10;
+    var wlo=parseFloat($('pr-new-wlo').value)||0;
+    var whi=parseFloat($('pr-new-whi').value)||wlo;
+    if(!name){ $('pr-new-name').focus(); return; }
+    if((window.LEAD_TYPES||[]).some(function(t){return t.name.toLowerCase()===name.toLowerCase();})){
+      alert('A lead type called "'+name+'" already exists.'); return;
+    }
+    window.addLeadType({name:name, category:cat, credits:credits, share:share, unlock:unlock, worthLow:wlo, worthHigh:whi});
+    // reset form
+    ['pr-new-name','pr-new-share','pr-new-wlo','pr-new-whi'].forEach(function(id){ $(id).value=''; });
+    $('pr-new-credits').value=1; $('pr-new-unlock').value=10;
+    if($('pr-new-cat-other')) $('pr-new-cat-other').value='';
+    toggleAddForm(false);
+  }
+
+  buildRows();
+  syncFromForecast();
+  $('pr-rate').addEventListener('input', recalc);
+  var fr=$('rate'); if(fr) fr.addEventListener('input', syncFromForecast);
+  var toggleBtn=$('pr-toggle-add'); if(toggleBtn) toggleBtn.addEventListener('click', function(){
+    var f=$('pr-addform'); toggleAddForm(f.style.display!=='grid');
+  });
+  var catSel=$('pr-new-cat'); if(catSel) catSel.addEventListener('change', function(){
+    var other=$('pr-new-cat-other-wrap'); if(other) other.style.display = catSel.value==='__new__' ? 'flex' : 'none';
+  });
+  var saveBtn=$('pr-new-save'); if(saveBtn) saveBtn.addEventListener('click', submitNewType);
+
+  function markActiveTierPricing(){
+    var rv=(parseFloat($('pr-rate').value)||0).toFixed(2);
+    document.querySelectorAll('#sec-pricing .tierpill').forEach(function(p){
+      p.classList.toggle('active', Math.abs(parseFloat(p.dataset.rate)-rv)<0.005);
+    });
+  }
+  document.querySelectorAll('#sec-pricing .tierpill').forEach(function(p){
+    p.addEventListener('click', function(){
+      $('pr-rate').value = p.dataset.rate;
+      recalc();
+      markActiveTierPricing();
+      // push to Forecast's rate slider too, so both tabs stay in lockstep
+      var fr=$('rate');
+      if(fr){ fr.value = p.dataset.rate; fr.dispatchEvent(new Event('input')); }
+    });
+  });
+  $('pr-rate').addEventListener('input', markActiveTierPricing);
+  markActiveTierPricing();
+
+  if(window.onLeadTypesChange) window.onLeadTypesChange(function(){ buildRows(); recalc(); });
+})();
+</script>
+</body>
+</html>
